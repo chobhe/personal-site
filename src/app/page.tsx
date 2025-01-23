@@ -14,6 +14,7 @@ const Home: React.FC = () => {
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(0);
+  const [viewportWidth, setViewportWidth] = useState(0);
   const [smoothScrollPosition, setSmoothScrollPosition] = useState(0); // For interpolated scroll position
 
 
@@ -37,6 +38,7 @@ const Home: React.FC = () => {
 
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
+      setViewportWidth(window.innerWidth);
     };
 
     const handleScroll = () => {
@@ -62,14 +64,30 @@ const Home: React.FC = () => {
       <div className="w-full max-w-md space-y-4 relative">
         {conversation.map((text, index) => {
           // Calculate bubble offset
-          const bubbleAnchor = index * 400; // Space bubbles every 400px
+          const bubbleAnchor = index * viewportHeight;
           const offset = smoothScrollPosition - bubbleAnchor;
 
-          console.log(`offset: ${offset} bubbleAnchor: ${bubbleAnchor} scrollPosition: ${scrollPosition}`);
+          console.log(` bubble ${index} offset: ${offset} bubbleAnchor: ${bubbleAnchor} scrollPosition: ${scrollPosition} viewportWidth: ${viewportWidth} viewportHeight: ${viewportHeight}`);
 
           // Smooth transitions based on scroll
-          const opacity = Math.max(0, 1 - Math.abs(offset) / 400); // Fully visible near its anchor
           const translateY = viewportHeight - offset; // Directly tie Y position to the offset
+          // const translateX = Math.min(-viewportWidth/2 + offset,0) + Math.min(0, viewportWidth/2 - offset)
+          const translateX =
+          translateY >= viewportHeight / 2
+            ? -((viewportWidth / 2) * (translateY - viewportHeight/2)) / (viewportHeight / 2)
+            : ((viewportWidth / 2) * (translateY - viewportHeight/2)) / (viewportHeight / 2);
+          // TODO: Make a x = y^2 curve with a max of viewportWidth/2
+
+
+
+
+
+           // Scale the bubble (min 0.5, max 1.5 at center)
+          //  const scale = Math.max(0.5, Math.min(1.5, 1 + (1 - Math.abs(offset - viewportHeight / 2) / (viewportHeight / 2))));
+          const scale = 1
+
+           // Opacity: Fully visible at center, fades out at edges
+           const opacity = 1
 
           return (
             <TextBubble
@@ -77,7 +95,7 @@ const Home: React.FC = () => {
               text={text}
               style={{
                 opacity,
-                transform: `translateY(${translateY}px)`, // Smooth vertical movement
+                transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`,
               }}
             />
           );
