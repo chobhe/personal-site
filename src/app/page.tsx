@@ -32,16 +32,21 @@ const Home: React.FC = () => {
         {conversation.map((text, index) => {
           const bubbleAnchor = (index + 1) * viewportHeight;
 
-          // translateX is the scaled function of the scroll postition
-          const translateX = useTransform(
-            scrollY,
-            [bubbleAnchor - viewportHeight, bubbleAnchor -viewportHeight/2, bubbleAnchor],
-            [
-              -viewportWidth/2, // Start buttom left
-              0, // Center
-              -viewportWidth/2, // end top left
-            ]
-          );
+          // // translateX is the scaled function of the scroll postition
+          // const translateX = useTransform(
+          //   scrollY,
+          //   [bubbleAnchor - viewportHeight, bubbleAnchor -viewportHeight/2, bubbleAnchor],
+          //   [
+          //     -viewportWidth/2, // Start buttom left
+          //     0, // Center
+          //     -viewportWidth/2, // end top left
+          //   ]
+          // );
+          const translateX = useTransform(scrollY, (latestScrollY) => {
+            const relHeight = latestScrollY - (bubbleAnchor - viewportHeight / 2); // Adjusted to center the parabola
+            const k = 0.002; // Steepness of the curve
+            return -k * Math.pow(relHeight, 2) ; // Parabolic function with horizontal center
+          });
           console.log(`translateX ${translateX.get} bubbleAnchor ${bubbleAnchor} scrollY ${scrollY.get()}`)
 
           return (
