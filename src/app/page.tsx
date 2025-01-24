@@ -49,12 +49,25 @@ const Home: React.FC = () => {
           });
           console.log(`translateX ${translateX.get} bubbleAnchor ${bubbleAnchor} scrollY ${scrollY.get()}`)
 
+
+          // Note the scaling messes with the parabolic shape
+          const scale = useTransform(scrollY, (latestScrollY) => {
+            const relHeight = latestScrollY - (bubbleAnchor - viewportHeight / 2); // Distance from vertex
+            const maxScale = 2; // Maximum scale at vertex
+            const k = 0.00001; // Adjust steepness of fall-off
+            return Math.max(1, maxScale - k * Math.pow(relHeight, 2)); // Scale decreases quadratically
+          });
+
+
+
           return (
             <motion.div
               key={index}
               style={{
                 x: translateX,
                 y: bubbleAnchor,
+                scale, 
+                transformOrigin: 'center center', // Ensure scaling does not affect alignment
               }}
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
