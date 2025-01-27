@@ -1,86 +1,44 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import TextBubble from '../components/TextBubble';
-import dynamic from 'next/dynamic';
-import { motion, useScroll, useTransform, motionValue} from "framer-motion";
-
-const Home: React.FC = () => {
-  const conversation = [
-    "Hi, I'm building my personal website!",
-    "It's designed like a text conversation.",
-    "How cool is that? 😊",
-    "Want to learn more?",
-  ];
-
-  const { scrollY } = useScroll();
-  const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 0;
-  const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
-
-
-  useEffect(() => {
-    const unsubscribe = scrollY.on("change", (latest) => {
-      console.log(`scrollY changed: ${latest}`);
-    });
-    
-    return () => unsubscribe();
-  }, [scrollY]);
-
+export default function Page() {
   return (
-    <div className="min-h-[400vh] bg-gray-50 flex flex-col items-center">
-      <div className="w-full max-w-md space-y-4 relative">
-        {conversation.map((text, index) => {
-          const bubbleAnchor = (index + 1) * viewportHeight;
+    <div className="flex items-center justify-center h-screen bg-gray-300">
+      {/* Book Container */}
+      <div className="relative w-[60%] h-[80%] bg-orange-500 border-4 border-black shadow-2xl rounded-lg overflow-hidden">
+        {/* Spine */}
+        <div
+          className="absolute left-0 top-0 h-full w-[10%] bg-cover bg-center border-r-4 border-black shadow-inner"
+          style={{ backgroundImage: "url('/book-spine.jpg')" }}
+        ></div>
 
-          // // translateX is the scaled function of the scroll postition
-          // const translateX = useTransform(
-          //   scrollY,
-          //   [bubbleAnchor - viewportHeight, bubbleAnchor -viewportHeight/2, bubbleAnchor],
-          //   [
-          //     -viewportWidth/2, // Start buttom left
-          //     0, // Center
-          //     -viewportWidth/2, // end top left
-          //   ]
-          // );
-          const translateX = useTransform(scrollY, (latestScrollY) => {
-            const relHeight = latestScrollY - (bubbleAnchor - viewportHeight / 2); // Adjusted to center the parabola
-            const k = 0.002; // Steepness of the curve
-            return -k * Math.pow(relHeight, 2) ; // Parabolic function with horizontal center
-          });
-          console.log(`translateX ${translateX.get} bubbleAnchor ${bubbleAnchor} scrollY ${scrollY.get()}`)
+        {/* Page Edge */}
+        <div
+          className="absolute right-0 top-0 h-full w-[5%] bg-cover border-l-2 border-gray-300 shadow-inner"
+          style={{ backgroundImage: "url('/page-edge.jpg')" }}
+        ></div>
 
+        {/* Front Cover */}
+        <div
+          className="flex flex-col items-center justify-center h-full px-10 bg-cover bg-center"
+          style={{ backgroundImage: "url('/book-cover-texture.jpg')" }}
+        >
+          {/* Title */}
+          <h1 className="text-5xl font-bold text-white drop-shadow-md">
+            No, David!
+          </h1>
 
-          // Note the scaling messes with the parabolic shape
-          const scale = useTransform(scrollY, (latestScrollY) => {
-            const relHeight = latestScrollY - (bubbleAnchor - viewportHeight / 2); // Distance from vertex
-            const maxScale = 2; // Maximum scale at vertex
-            const k = 0.00001; // Adjust steepness of fall-off
-            return Math.max(1, maxScale - k * Math.pow(relHeight, 2)); // Scale decreases quadratically
-          });
+          {/* Cartoon Character */}
+          <div className="mt-10 flex flex-col items-center">
+            <div className="w-24 h-24 bg-yellow-300 border-4 border-black rounded-full"></div>
+            <div className="w-10 h-40 bg-yellow-300 border-4 border-black"></div>
+            <div className="flex gap-8 mt-2">
+              <div className="w-12 h-12 bg-yellow-300 border-4 border-black rounded-full"></div>
+              <div className="w-12 h-12 bg-yellow-300 border-4 border-black rounded-full"></div>
+            </div>
+          </div>
 
-
-
-          return (
-            <motion.div
-              key={index}
-              style={{
-                x: translateX,
-                y: bubbleAnchor,
-                scale, 
-                transformOrigin: 'center center', // Ensure scaling does not affect alignment
-              }}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: "spring", stiffness: 100, damping: 15 }}
-            >
-              <TextBubble text={text} />
-            </motion.div>
-          );
-        })}
+          {/* Author Name */}
+          <p className="mt-10 text-2xl font-medium text-white">By Your Name</p>
+        </div>
       </div>
     </div>
   );
-};
-
-// Disable SSR for the Home component
-export default dynamic(() => Promise.resolve(Home), { ssr: false });
+}
