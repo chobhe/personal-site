@@ -1,43 +1,79 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import notebookCover from '@/assets/images/notebook-cover.png';
+
+
 export default function Page() {
+  const [position, setPosition] = useState({ x: 100, y: 100 });
+  const [dragging, setDragging] = useState(false);
+  const offset = useRef({ x: 0, y: 0 });
+
+  // Function to start dragging
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent browser drag behavior
+    setDragging(true);
+    offset.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    };
+  };
+
+  // Function to update position on mouse move
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragging) return;
+    setPosition({
+      x: e.clientX - offset.current.x,
+      y: e.clientY - offset.current.y,
+    });
+  };
+
+  // Function to stop dragging
+  const handleMouseUp = () => {
+    setDragging(false);
+  };
+
+  // Attach global mousemove and mouseup listeners
+  useEffect(() => {
+    if (dragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    } else {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [dragging]);
+
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-300">
-      {/* Book Container */}
-      <div className="relative w-[60%] h-[80%] bg-orange-500 border-4 border-black shadow-2xl rounded-lg overflow-hidden">
-        {/* Spine */}
-        <div
-          className="absolute left-0 top-0 h-full w-[10%] bg-cover bg-center border-r-4 border-black shadow-inner"
-          style={{ backgroundImage: "url('/book-spine.jpg')" }}
-        ></div>
+    <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden">
 
-        {/* Page Edge */}
-        <div
-          className="absolute right-0 top-0 h-full w-[5%] bg-cover border-l-2 border-gray-300 shadow-inner"
-          style={{ backgroundImage: "url('/page-edge.jpg')" }}
-        ></div>
+      {/* Background Video */}
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src="/videos/background.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
-        {/* Front Cover */}
-        <div
-          className="flex flex-col items-center justify-center h-full px-10 bg-cover bg-center"
-          style={{ backgroundImage: "url('/book-cover-texture.jpg')" }}
-        >
-          {/* Title */}
-          <h1 className="text-5xl font-bold text-white drop-shadow-md">
-            No, David!
-          </h1>
-
-          {/* Cartoon Character */}
-          <div className="mt-10 flex flex-col items-center">
-            <div className="w-24 h-24 bg-yellow-300 border-4 border-black rounded-full"></div>
-            <div className="w-10 h-40 bg-yellow-300 border-4 border-black"></div>
-            <div className="flex gap-8 mt-2">
-              <div className="w-12 h-12 bg-yellow-300 border-4 border-black rounded-full"></div>
-              <div className="w-12 h-12 bg-yellow-300 border-4 border-black rounded-full"></div>
-            </div>
-          </div>
-
-          {/* Author Name */}
-          <p className="mt-10 text-2xl font-medium text-white">By Your Name</p>
-        </div>
+      {/* Draggable Image */}
+      <div
+        className="absolute cursor-grab active:cursor-grabbing"
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          willChange: 'transform', // Optimizes performance
+        }}
+        onMouseDown={handleMouseDown}
+      >
+        <Image src={notebookCover} alt="Draggable Image" width={200} height={200} />
       </div>
     </div>
   );
