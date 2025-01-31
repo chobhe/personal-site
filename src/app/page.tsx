@@ -3,12 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-cover.png';
+import BackgroundVideo from "@/components/VideoCollage";
+import VideoCollage from '@/components/VideoCollage';
+
 
 
 export default function Page() {
   const [position, setPosition] = useState({ x: 100, y: 100 });
   const [dragging, setDragging] = useState(false);
   const offset = useRef({ x: 0, y: 0 });
+
+
 
   // Function to start dragging
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -52,17 +57,7 @@ export default function Page() {
   return (
     <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden">
 
-      {/* Background Video */}
-      <video
-        className="absolute top-0 left-0 w-full h-full object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
-      >
-        <source src="/videos/background.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <VideoCollage />
 
       {/* Draggable Image */}
       <div
