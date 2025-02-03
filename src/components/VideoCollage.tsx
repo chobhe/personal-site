@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 
 
 const videos = [
@@ -28,13 +28,18 @@ const positions = [
   { position: "bottom-0 right-0 w-1/3 h-2/3", shift: 0 }, // Shifted to center
 ];
 
+
 export default function VideoCollage() {
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
     videoRefs.current.forEach((video) => {
-      if (video) {
-        video.play().catch((error) => console.error("Error playing video:", error));
+      if (video && document.contains(video)) {
+        video.play().catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("Error playing video:", error);
+          }
+        });
       }
     });
   }, []);
