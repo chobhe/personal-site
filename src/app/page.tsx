@@ -26,12 +26,6 @@ export default function Page() {
     return () => window.removeEventListener("resize", updateCollageHeight);
   }, []);
 
-  // Ensure the user starts at the middle collage (ID 0)
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = collageHeight; // Start at the second item (collage 0)
-    }
-  }, [collageHeight]);
 
   // Infinite Scroll Logic (Add collages dynamically)
   useEffect(() => {
@@ -42,25 +36,14 @@ export default function Page() {
       const scrollBottom = scrollTop + containerRef.current.clientHeight;
 
       // Add new collage at the bottom when reaching 90% of the current stack
-      if (scrollBottom >= collages.length * collageHeight - collageHeight * 0.1) {
+      if (scrollBottom >= collages.length * collageHeight - collageHeight * 0.5) {
         setCollages((prev) => [...prev, prev.length]); // Add a new one below
       }
 
-      // Add a new collage at the top when reaching the first 10% of the scroll
-      if (scrollTop <= collageHeight * 0.1 ) {
-        setCollages((prev) => [prev[0] - 1, ...prev]); // Add a new one above
-
-        // Prevent visual jump by keeping user at the same visible scroll position
-        setTimeout(() => {
-          if (containerRef.current) {
-            containerRef.current.scrollTop += collageHeight;
-          }
-        }, 0);
-      }
 
       // Optional: Remove old collages to optimize performance
       if (collages.length > 10) {
-        setCollages((prev) => prev.slice(1, -1)); // Keep a rolling window of 10 collages
+        setCollages((prev) => prev.slice(1)); // Keep a rolling window of 10 collages
       }
     };
 
