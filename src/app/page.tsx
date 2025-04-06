@@ -1,18 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import notebookCover from '@/assets/images/notebook-cover.png';
 import VideoCollage from '@/components/VideoCollage';
+import Notebook from '@/components/Notebook';
 
 
 
 export default function Page() {
-  // Draggable image states
-  const [position, setPosition] = useState({ x: 100, y: 100 });
-  const [dragging, setDragging] = useState(false);
-  const offset = useRef({ x: 0, y: 0 });
-
   // Video collage states
   const containerRef = useRef<HTMLDivElement>(null);
   const [collageHeight, setCollageHeight] = useState(() => window.innerHeight); // Set initial height
@@ -37,7 +31,7 @@ export default function Page() {
 
       // Add new collage at the bottom when reaching 90% of the current stack
       if (scrollBottom >= collages.length * collageHeight - collageHeight * 0.5) {
-        setCollages((prev) => [...prev, prev.length]); // Add a new one below
+        setCollages((prev) => [...prev, prev[prev.length - 1] + 1]); // Add a new one below
       }
 
 
@@ -53,44 +47,7 @@ export default function Page() {
   }, [collages, collageHeight]);
 
 
-  // Function to start dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent browser drag behavior
-    setDragging(true);
-    offset.current = {
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    };
-  };
 
-  // Function to update position on mouse move
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!dragging) return;
-    setPosition({
-      x: e.clientX - offset.current.x,
-      y: e.clientY - offset.current.y,
-    });
-  };
-
-  // Function to stop dragging
-  const handleMouseUp = () => {
-    setDragging(false);
-  };
-
-  // Attach global mousemove and mouseup listeners
-  useEffect(() => {
-    if (dragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    } else {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    }
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [dragging]);
 
   return (
    <div className="w-screen h-screen flex items-center justify-center relative">
@@ -109,15 +66,8 @@ export default function Page() {
       </div>
 
       {/* Draggable Image */}
-      <div
-        className="absolute cursor-grab active:cursor-grabbing"
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          willChange: 'transform', // Optimizes performance
-        }}
-        onMouseDown={handleMouseDown}
-      >
-        <Image src={notebookCover} alt="Draggable Image" width={200} height={200} />
+      <div className="flex justify-center items-center h-screen">
+        <Notebook title="charlie he" />
       </div>
     </div>
   );
