@@ -9,7 +9,7 @@ import notebookInside from '@/assets/images/notebook-open.png';
 // TODOs
 // 1. pre click make sure the notebook opening is invisible -> DONE
 // 1.5 make sure the notebook cover clickbox is smaller -> DONE
-// 2  post click make the background still scrollable 
+// 2  post click make the background still scrollable(DONE) and pre click while hovering over notebook
 // 3. make the notebook on click the tabs (Make the tabs their own component)
 // 4. design things on the tabs 
 // 5. make the tabs visible when the notebook is open so the user can use them to navigate
@@ -22,7 +22,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
     return (
       <div
         className="inline-block font-['Roboto']"
-        style={{ perspective: '1000px' }}
+        style={{ perspective: '1000px', pointerEvents: 'none' }}
       >
         {/* Static Inside (background) */}
         <motion.div
@@ -36,7 +36,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
 
           }}
           transition={{ duration: 1, ease: 'easeInOut' }}
-          style={{ width: '40vw', height: '40vh' }}
+          style={{ width: '40vw', height: '40vh', pointerEvents: 'none' }}
         >
             <Image
                 src={notebookInside}
@@ -49,32 +49,37 @@ export default function NotebookFlip({ title = 'charlie he' }) {
     
         {/* Animated Cover (foreground) */}
         <motion.div
-            className="absolute inset-0 origin-left cursor-pointer"
+            className="absolute inset-0 origin-left"
             initial={false}
             animate={{ rotateY: isOpen ? -160 : 0 }}
             transition={{ duration: 1, ease: 'easeInOut' }}
             style={{ 
                 transformStyle: 'preserve-3d', 
-                pointerEvents: 'auto',
-
+                pointerEvents: 'none',
             }}
         >
             <Image
                 src={notebookCover}
                 alt="Notebook Cover"
                 fill
-                style={{ objectFit: 'contain', backfaceVisibility: 'hidden' }}
+                style={{ 
+                    objectFit: 'contain', 
+                    backfaceVisibility: 'hidden',
+                    pointerEvents: 'none'
+                }}
             />
 
             {/* Small clickable area overlay (only handles clicks, no visual effect) */}
-            <div
+            <button
                 className="absolute cursor-pointer"
                 style={{
-                width: '30%',   // <- clearly controls clickable region width ONLY
-                height: '100%',  
-                top: '20%',     
-                left: '40%',    
-                pointerEvents: 'auto', // explicitly captures click events
+                    width: '30%',   // <- clearly controls clickable region width ONLY
+                    height: '100%',  
+                    top: '20%',     
+                    left: '40%',
+                    background: 'transparent', // invisible clickable area
+                    border: 'none',
+                    pointerEvents: 'auto',    
                 }}
                 onClick={(e) => {
                 e.stopPropagation();

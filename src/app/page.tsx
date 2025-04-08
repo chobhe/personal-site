@@ -9,16 +9,19 @@ import Notebook from '@/components/Notebook';
 export default function Page() {
   // Video collage states
   const containerRef = useRef<HTMLDivElement>(null);
-  const [collageHeight, setCollageHeight] = useState(() => window.innerHeight); // Set initial height
+  const [collageHeight, setCollageHeight] = useState(0); // Default initial height
   const [collages, setCollages] = useState([-1, 0, 1]); // Indexes for rendered collages
 
-
-  // Update collage height when window resizes
   useEffect(() => {
-    const updateCollageHeight = () => setCollageHeight(window.innerHeight);
-    window.addEventListener("resize", updateCollageHeight);
-    return () => window.removeEventListener("resize", updateCollageHeight);
+    setCollageHeight(window.innerHeight); // Runs only on client-side after component mounts
+
+    // Optional: Update on window resize
+    const handleResize = () => setCollageHeight(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
 
 
   // Infinite Scroll Logic (Add collages dynamically)
@@ -66,7 +69,8 @@ export default function Page() {
       </div>
 
       {/* Draggable Image */}
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen"
+      style={{ pointerEvents: 'none' }}>
         <Notebook title="charlie he" />
       </div>
     </div>
