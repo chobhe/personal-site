@@ -68,9 +68,10 @@ export default function Page() {
         ))}
       </div>
 
-      {/* Draggable Image */}
-      <div className="flex justify-center items-center h-screen"
-      style={{ pointerEvents: 'none' }}>
+      {/* Notebook Overlay */}
+      <div
+        className="absolute inset-0 flex justify-center items-center pointer-events-none"
+      >
         <Notebook title="charlie he" />
       </div>
     </div>
