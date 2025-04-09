@@ -29,7 +29,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
         className="inline-block font-['Roboto'] relative"
         style={{ perspective: '1000px', pointerEvents: 'none' }}
       >
-        <div className="relative" style={{ width: '40vw', height: '40vh' }}>
+        <div className="relative" style={{ width: '28.6vw', height: '40vh' }}>
         {/* Static Inside (background) */}
             <motion.div
             className="absolute inset-0"
@@ -101,7 +101,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 {title}
                 </motion.div>
             </motion.div>
-            {/* 👇 Tabs moved OUTSIDE scaled containers, no longer affected by scaling */}
+
             <div className="absolute inset-y-0 pointer-events-auto" style={{ right: '0%', width: '8%', zIndex: 10 }}>
                 <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
             </div>
