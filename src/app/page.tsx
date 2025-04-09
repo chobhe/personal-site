@@ -66,14 +66,15 @@ export default function Page() {
             <VideoCollage />
           </div>
         ))}
-      </div>
 
-      {/* Notebook Overlay */}
-      <div
-        className="absolute inset-0 flex justify-center items-center pointer-events-none"
-      >
-        <Notebook title="charlie he" />
+
+        {/* Notebook Overlay */}
+          <div
+            className="sticky bottom-1/2 transform translate-y-1/2 inset-0 flex justify-center items-center"
+          >
+            <Notebook title="charlie he" />
+        </div>
       </div>
     </div>
-  );
+);
 }
