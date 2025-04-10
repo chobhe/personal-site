@@ -24,27 +24,32 @@ const tabs: Tab[] = [
 
 export default function NotebookTabs({ selectedTab, setSelectedTab }: NotebookTabsProps) {
   return (
-    <div className="absolute inset-y-0 right-0 h-full w-full pointer-events-none">
-      {tabs.map((tab) => (
-        <button
-          key={tab.name}
-          onClick={() => setSelectedTab(tab.name)}
-          className="absolute flex items-center justify-end pointer-events-auto"
-          style={{ top: tab.topOffset, right: 0, width: '100%' }}
-        >
-          <div className="relative w-full" style={{ paddingTop: '60%' }}>
-            <Image
-              src={tab.asset}
-              alt={`${tab.name} Tab`}
-              fill
-              style={{ objectFit: 'contain' }}
-              className={`transition-transform duration-500 ${
-                selectedTab === tab.name ? '-translate-x-full' : '-translate-x-1/2'
-              }`}
-            />
-          </div>
-        </button>
-      ))}
+    <div className="relative h-full w-full pointer-events-none translate-x-full" /* translate the container right in the x axis */ > 
+      {tabs.map((tab) => {
+        const { width, height } = tab.asset;
+        const paddingTop = `${(height / width) * 70}%`;
+        return (
+          <button
+            key={tab.name}
+            onClick={() => setSelectedTab(tab.name)}
+            className="absolute flex justify-end pointer-events-auto"
+            style={{
+              top: tab.topOffset,
+              right: 0,
+              width: '100%',        // Adjust this % to scale the width
+            }}
+          >
+            <div className="relative w-full" style={{ paddingTop }}>
+              <Image
+                src={tab.asset}
+                alt={`${tab.name} Tab`}
+                fill
+                style={{objectPosition: 'left', objectFit: 'contain', backfaceVisibility: 'hidden' }}
+              />
+            </div>
+          </button>
+        )})
+      }
     </div>
   );
 }

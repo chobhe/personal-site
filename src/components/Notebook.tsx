@@ -29,7 +29,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
         className="inline-block font-['Roboto'] relative"
         style={{ perspective: '1000px'}}
       >
-        <div className="relative" style={{ width: '28.6vw', height: '40vh' }}>
+        <div className="relative" style={{ width: '19vw', height: '40vh' }}>
         {/* Static Inside (background) */}
             <motion.div
             className="absolute inset-0"
@@ -76,10 +76,10 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 <button
                     className="absolute cursor-pointer"
                     style={{
-                        width: '30%',   // <- clearly controls clickable region width ONLY
-                        height: '100%',  
-                        top: '20%',     
-                        left: '40%',
+                        width: '90%',   // <- clearly controls clickable region width ONLY
+                        height: '90%',  
+                        top: '5%',     
+                        left: '5%',
                         background: 'transparent', // invisible clickable area
                         border: 'none', 
                     }}
@@ -97,11 +97,11 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 >
                 {title}
                 </motion.div>
-            </motion.div>
 
-            <div className="absolute inset-y-0 pointer-events-auto" style={{ right: '0%', width: '8%', zIndex: 10 }}>
-                <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-            </div>
+                <div className="absolute inset-y-0 pointer-events-auto" style={{ right: '0%', width: '10%', zIndex: 10 }}>
+                    <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+                </div>
+            </motion.div>
         </div>
       </div>
     );
