@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-no-dividers.png';
 import notebookInside from '@/assets/images/notebook-open.png';
-import Tabs from '@/components/Tabs';
+import NotebookTabs, {tabs} from '@/components/Tabs';
 
 
 // TODOs
@@ -13,6 +13,7 @@ import Tabs from '@/components/Tabs';
 // 1.5 make sure the notebook cover clickbox is smaller -> DONE
 // 2  post click make the background still scrollable(DONE) and pre click while hovering over notebook -> DONE
 // 3. make the notebook on click the tabs (Make the tabs their own component)
+// 3.5 I feel like I essentially need to anchor the tabs from the cover to the inside then whichever one is clicked should rotate with the cover and anchor on the other side
 // 4. design things on the tabs 
 // 5. make the tabs visible when the notebook is open so the user can use them to navigate
 // 5.5 when the tabs get clicked it should look like the page is flipping to the next page
@@ -22,6 +23,17 @@ import Tabs from '@/components/Tabs';
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState('About Me');
+
+    var selectedIndex =0 
+    for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].name === selectedTab) {
+            selectedIndex = i;
+            break;
+        }
+    }
+
+    const tabsLeft = tabs.slice(0, selectedIndex + 1);
+    const tabsRight = tabs.slice(selectedIndex + 1);
 
 
     return (
@@ -50,6 +62,28 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     fill
                     style={{ objectFit: 'contain'}}
                 />
+
+                 {/* Left-side Tabs after flip */}
+                <motion.div
+                    className="absolute inset-y-0 left-0 flex flex-col items-start pointer-events-auto"
+                    initial={{ x: '-2vw', opacity: 0 }}
+                    animate={{ x: isOpen ? '0vw' : '-2vw', opacity: isOpen ? 1 : 0 }}
+                    transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
+                    style={{ width: '10%', zIndex: 10 }}
+                >
+                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={selectedIndex} endIndex={tabs.length}/>
+                </motion.div>
+
+                {/* Right-side Tabs after flip */}
+                <motion.div
+                    className="absolute inset-y-0 right-0 flex flex-col items-end pointer-events-auto"
+                    initial={{ x: '2vw', opacity: 0 }}
+                    animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
+                    transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
+                    style={{ width: '10%', zIndex: 10 }}
+                >
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex}/>
+                </motion.div>
             </motion.div>
 
             {/* Animated Cover (foreground) */}
@@ -98,9 +132,20 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 {title}
                 </motion.div>
 
-                <div className="absolute inset-y-0 pointer-events-auto" style={{ right: '0%', width: '10%', zIndex: 10 }}>
-                    <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-                </div>
+
+                {/* Tabs on the cover */}
+                <motion.div
+                    className="absolute inset-y-0 right-0 flex flex-col items-end pointer-events-auto"
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: isOpen ? 0 : 1 }}
+                    transition={{ duration: 0.7, ease: 'easeInOut' }}
+                    style={{ width: '10%', zIndex: 30 }}
+                >
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true}/>
+                </motion.div>
+                {/* <div className="absolute inset-y-0 pointer-events-auto" style={{ right: '0%', width: '10%', zIndex: 10 }}>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+                </div> */}
             </motion.div>
         </div>
       </div>

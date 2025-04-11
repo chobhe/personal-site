@@ -14,24 +14,34 @@ interface Tab {
 interface NotebookTabsProps {
   selectedTab: string;
   setSelectedTab: (tab: string) => void;
+  startIndex?: number; // default to 0
+  endIndex?: number; // default to tabs.length
+  stopPropagation?: boolean; // default to false
 }
 
-const tabs: Tab[] = [
+export const tabs: Tab[] = [
   { name: 'About Me', asset: aboutMeTab, topOffset: '10%' },
   { name: 'Work History', asset: workHistoryTab, topOffset: '30%' },
   { name: 'Lists', asset: listsTab, topOffset: '50%' },
 ];
 
-export default function NotebookTabs({ selectedTab, setSelectedTab }: NotebookTabsProps) {
+export default function NotebookTabs({ selectedTab, setSelectedTab, startIndex = 0, endIndex = tabs.length, stopPropagation=false}: NotebookTabsProps) {
   return (
     <div className="relative h-full w-full pointer-events-none translate-x-full" /* translate the container right in the x axis */ > 
-      {tabs.map((tab) => {
+      {tabs.slice(startIndex, endIndex).map((tab) => {
         const { width, height } = tab.asset;
         const paddingTop = `${(height / width) * 70}%`;
+
+        const onClickFunction = (event: React.MouseEvent) => {
+          setSelectedTab(tab.name);
+          if (stopPropagation) {
+            event.stopPropagation();
+          }
+        };
         return (
           <button
             key={tab.name}
-            onClick={() => setSelectedTab(tab.name)}
+            onClick={(event) => onClickFunction(event)}
             className="absolute flex justify-end pointer-events-auto"
             style={{
               top: tab.topOffset,
