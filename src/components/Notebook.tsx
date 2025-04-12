@@ -84,7 +84,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex}/>
                 </motion.div>
             </motion.div>
-        <div className="relative" style={{ width: '16vw', height: '40vh' }}>
+        <div className="relative" style={{ width: '13vw', height: '40vh' }}>
             {/* Animated Cover (foreground) */}
             <motion.div
                 className="absolute inset-0 origin-left"
@@ -134,11 +134,11 @@ export default function NotebookFlip({ title = 'charlie he' }) {
 
                 {/* Tabs on the cover */}
                 <motion.div
-                    className="absolute inset-y-0 right-0 flex flex-col items-end pointer-events-auto"
+                    className="absolute inset-y-0 flex flex-col items-end pointer-events-auto"
                     initial={{ opacity: 1 }}
                     animate={{ opacity: isOpen ? 0 : 1 }}
                     transition={{ duration: 0.7, ease: 'easeInOut' }}
-                    style={{ width: '10%', zIndex: 30 }}
+                    style={{ width: '10%', right:".6%", zIndex: 30 }}
                 >
                     <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true}/>
                 </motion.div>
