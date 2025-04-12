@@ -41,15 +41,14 @@ export default function NotebookFlip({ title = 'charlie he' }) {
         className="inline-block font-['Roboto'] relative"
         style={{ perspective: '1000px'}}
       >
-        <div className="relative" style={{ width: '19vw', height: '40vh' }}>
+        
         {/* Static Inside (background) */}
+        <div className="relative flex items-center justify-center" style={{ width: '36vw', height: '50vh' }}>
             <motion.div
             className="absolute inset-0"
             initial={false}
             animate={{
-                scale: isOpen ? 4 : 1,
-                x: isOpen ? '0vw' : 0,
-                y: isOpen ? '0vh' : 0,
+                scale: isOpen ? 1.8 : 1,
                 opacity: isOpen ? 1 : 0, // Only affects notebook inside
 
             }}
@@ -85,7 +84,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex}/>
                 </motion.div>
             </motion.div>
-
+        <div className="relative" style={{ width: '16vw', height: '40vh' }}>
             {/* Animated Cover (foreground) */}
             <motion.div
                 className="absolute inset-0 origin-left"
@@ -143,10 +142,8 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 >
                     <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true}/>
                 </motion.div>
-                {/* <div className="absolute inset-y-0 pointer-events-auto" style={{ right: '0%', width: '10%', zIndex: 10 }}>
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-                </div> */}
             </motion.div>
+          </div>
         </div>
       </div>
     );

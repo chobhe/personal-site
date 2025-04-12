@@ -25,10 +25,10 @@ export const tabs: Tab[] = [
   { name: 'Lists', asset: listsTab, topOffset: '50%' },
 ];
 
-export default function NotebookTabs({ selectedTab, setSelectedTab, startIndex = 0, endIndex = tabs.length, stopPropagation=false}: NotebookTabsProps) {
+export default function  qNotebookTabs({ selectedTab, setSelectedTab, startIndex = 0, endIndex = tabs.length, stopPropagation=false}: NotebookTabsProps) {
   return (
-    <div className="relative h-full w-full pointer-events-none translate-x-full" /* translate the container right in the x axis */ > 
-      {tabs.slice(startIndex, endIndex).map((tab) => {
+<div className="relative h-full w-full pointer-events-none" style={{ left: '100%', position: 'absolute' }}>
+  {tabs.slice(startIndex, endIndex).map((tab) => {
         const { width, height } = tab.asset;
         const paddingTop = `${(height / width) * 70}%`;
 
