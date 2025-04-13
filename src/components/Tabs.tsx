@@ -17,6 +17,7 @@ interface NotebookTabsProps {
   startIndex?: number; // default to 0
   endIndex?: number; // default to tabs.length
   stopPropagation?: boolean; // default to false
+  left?: boolean; // default to false (this is the side of the tabs)
 }
 
 export const tabs: Tab[] = [
@@ -25,41 +26,48 @@ export const tabs: Tab[] = [
   { name: 'Lists', asset: listsTab, topOffset: '50%' },
 ];
 
-export default function  qNotebookTabs({ selectedTab, setSelectedTab, startIndex = 0, endIndex = tabs.length, stopPropagation=false}: NotebookTabsProps) {
-  return (
-<div className="h-full w-full pointer-events-none" style={{ left: '100%', position: 'absolute' }}>
-  {tabs.slice(startIndex, endIndex).map((tab) => {
-        const { width, height } = tab.asset;
-        const paddingTop = `${(height / width) * 70}%`;
+export default function NotebookTabs({ selectedTab, setSelectedTab, startIndex = 0, endIndex = tabs.length, stopPropagation=false, left=false}: NotebookTabsProps) {
+  {
+    return (
+    <div className="h-full w-full pointer-events-none" style={{ 
+        left: left ? "-100%" : "100%", 
+        position: 'absolute' 
+    }}>
+      {tabs.slice(startIndex, endIndex).map((tab) => {
+            const { width, height } = tab.asset;
+            const paddingTop = `${(height / width) * 70}%`;
 
-        const onClickFunction = (event: React.MouseEvent) => {
-          setSelectedTab(tab.name);
-          if (stopPropagation) {
-            event.stopPropagation();
-          }
-        };
-        return (
-          <button
-            key={tab.name}
-            onClick={(event) => onClickFunction(event)}
-            className="absolute flex justify-end pointer-events-auto"
-            style={{
-              top: tab.topOffset,
-              right: 0,
-              width: '100%',        // Adjust this % to scale the width
-            }}
-          >
-            <div className="relative w-full" style={{ paddingTop }}>
-              <Image
-                src={tab.asset}
-                alt={`${tab.name} Tab`}
-                fill
-                style={{objectPosition: 'left', objectFit: 'contain', backfaceVisibility: 'hidden' }}
-              />
-            </div>
-          </button>
-        )})
-      }
-    </div>
-  );
+            const onClickFunction = (event: React.MouseEvent) => {
+              setSelectedTab(tab.name);
+              if (stopPropagation) {
+                event.stopPropagation();
+              }
+            };
+
+            return (
+              <button
+                key={tab.name}
+                onClick={(event) => onClickFunction(event)}
+                className={`absolute flex pointer-events-auto ${left ? 'justify-start' : 'justify-end'}`}
+                style={{
+                  top: tab.topOffset,
+                  left: left ? 0 : undefined,    // anchors left side if left is true
+                  right: left ? undefined : 0,   // anchors right side if left is false
+                  width: '100%',        // Adjust this % to scale the width
+                }}
+              >
+                <div className="relative w-full" style={{ paddingTop }}>
+                  <Image
+                    src={tab.asset}
+                    alt={`${tab.name} Tab`}
+                    fill
+                    style={{objectPosition: 'left', objectFit: 'contain', backfaceVisibility: 'hidden' }}
+                  />
+                </div>
+              </button>
+            )})
+        }
+      </div>
+    );
+  }
 }

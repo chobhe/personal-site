@@ -18,7 +18,8 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 // 5. make the tabs visible when the notebook is open so the user can use them to navigate
 // 5.5 when the tabs get clicked it should look like the page is flipping to the next page
 // 6. Post click make the notebook closable by clicking on the background
-// 7. pre click make the notebook draggable 
+// 7. pre click make the notebook draggable \
+// 8. Pulse the tabs so it's obvious to click on them
 
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +44,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
       >
         
         {/* Static Inside (background) */}
-        <div className="relative flex items-center justify-center" style={{ width: '36vw', height: '50vh' }}>
+        <div className="relative flex items-center justify-center" style={{ width: '33vw', height: '50vh' }}>
             <motion.div
             className="absolute inset-0"
             initial={false}
@@ -70,18 +71,18 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
                     style={{ width: '10%', zIndex: 10 }}
                 >
-                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={selectedIndex} endIndex={tabs.length}/>
+                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={selectedIndex + 1} endIndex={tabs.length} left={true}/>
                 </motion.div>
 
                 {/* Right-side Tabs after flip */}
                 <motion.div
-                    className="absolute inset-y-0 right-0 flex flex-col items-end pointer-events-auto"
+                    className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
                     initial={{ x: '2vw', opacity: 0 }}
                     animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
                     transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
                     style={{ width: '10%', zIndex: 10 }}
                 >
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex}/>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex + 1} left={false}/>
                 </motion.div>
             </motion.div>
         <div className="relative" style={{ width: '13vw', height: '40vh' }}>
@@ -138,9 +139,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     initial={{ opacity: 1 }}
                     animate={{ opacity: isOpen ? 0 : 1 }}
                     transition={{ duration: 0.7, ease: 'easeInOut' }}
-                    style={{ width: '10%', right:".6%", zIndex: 30 }}
+                    style={{ width: '10%', right:"0%", zIndex: 30 }}
                 >
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true}/>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true} left={false}/>
                 </motion.div>
             </motion.div>
           </div>
