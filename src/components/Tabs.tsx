@@ -61,7 +61,7 @@ export default function NotebookTabs({ selectedTab, setSelectedTab, startIndex =
                     src={tab.asset}
                     alt={`${tab.name} Tab`}
                     fill
-                    style={{objectPosition: 'left', objectFit: 'contain', backfaceVisibility: 'hidden' }}
+                    style={{objectPosition: left ? 'right':'left', objectFit: 'contain', backfaceVisibility: 'hidden' }}
                   />
                 </div>
               </button>
