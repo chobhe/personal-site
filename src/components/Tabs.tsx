@@ -62,7 +62,7 @@ export default function NotebookTabs({ selectedTab, setSelectedTab, startIndex =
                   top: tab.topOffset,
                   left: left ? 0 : undefined,    // anchors left side if left is true
                   right: left ? undefined : 0,   // anchors right side if left is false
-                  width: insideNotebookSelectedTab ? '150%' : '100%',
+                  width: insideNotebookSelectedTab ? '140%' : '100%',
                   zIndex: selectedTab === tab.name ? 20 : 10,
                   paddingTop,
                 }}
