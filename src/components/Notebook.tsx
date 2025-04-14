@@ -25,13 +25,29 @@ export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState('About Me');
 
-    const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
-    const handleTabClick = (tabName: string, fromLeft: boolean) => {
-        setFlipDirection(fromLeft ? 'right' : 'left');
-        setSelectedTab(tabName);
+    // const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
+    const [rightFlipAngle, setRightFlipAngle] = useState(0);
+    const [leftFlipAngle, setLeftFlipAngle] = useState(0);
 
-        // Reset flip after animation duration (e.g., 700ms)
-        setTimeout(() => setFlipDirection(null), 700);
+
+    // const handleTabClick = (tabName: string, fromLeft: boolean) => {
+    //     setSelectedTab(tabName);
+    //     setFlipDirection(fromLeft ? 'left' : 'right');
+
+    //     setTimeout(() => {
+    //         setFlipDirection(null);
+    //     }, 700); // reset after animation
+    //   };
+
+      const handleTabClick = (tabName: string, fromLeft: boolean) => {
+        setSelectedTab(tabName);
+        if (fromLeft) {
+            setLeftFlipAngle(prev => prev + 180); // left page flips to right
+        } else {
+            setRightFlipAngle(prev => prev - 180); // right page flips to left
+        }
+
+
       };
 
 
@@ -42,9 +58,6 @@ export default function NotebookFlip({ title = 'charlie he' }) {
             break;
         }
     }
-
-    const tabsLeft = tabs.slice(0, selectedIndex + 1);
-    const tabsRight = tabs.slice(selectedIndex + 1);
 
 
     return (
@@ -66,24 +79,27 @@ export default function NotebookFlip({ title = 'charlie he' }) {
             transition={{ duration: 1, ease: 'easeInOut' }}
             style={{ pointerEvents: 'none' }}
             >
+                {/* Notebook Background */}
+                <Image src={notebookInside} alt="Notebook Inside Background" fill style={{ objectFit: 'cover', objectPosition: 'center' }} />
+
                 {/* LEFT side of notebook */}
                 <motion.div
                 animate={{
-                    rotateY: flipDirection === 'right' ? -180 : 0,
-                    zIndex: flipDirection === 'right' ? 20 : 10
+                    rotateY: rightFlipAngle,
+                    zIndex:20
                 }}
-                initial={false}
-                transition={{ duration: 0.7, ease: 'easeInOut' }}
-                style={{
-                    width: '50%',
-                    height: '100%',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    overflow: 'hidden',
-                    transformOrigin: 'right center',
-                    transformStyle: 'preserve-3d',
-                }}
+                    initial={false}
+                    transition={{ duration: 0.7, ease: 'easeInOut' }} // no duration if flipDirection = null
+                    style={{
+                        width: '50%',
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        overflow: 'hidden',
+                        transformOrigin: 'right center',
+                        transformStyle: 'preserve-3d',
+                    }}
                 >
                 <Image src={notebookInside} alt="Left Page" fill style={{ objectFit: 'cover', objectPosition: 'left' }} />
                 
@@ -99,21 +115,21 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 {/* RIGHT tabs here */}
                 <motion.div
                 animate={{
-                    rotateY: flipDirection === 'left' ? 180 : 0,
-                    zIndex: flipDirection === 'left' ? 20 : 10
+                    rotateY: leftFlipAngle,
+                    zIndex:20
                 }}
-                initial={false}
-                transition={{ duration: 0.7, ease: 'easeInOut' }}
-                style={{
-                    width: '50%',
-                    height: '100%',
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    overflow: 'hidden',
-                    transformOrigin: 'left center',
-                    transformStyle: 'preserve-3d',
-                }}
+                    initial={false}
+                    transition={{ duration: 0.7, ease: 'easeInOut' }} // no duration if flipDirection = null
+                    style={{
+                        width: '50%',
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        overflow: 'hidden',
+                        transformOrigin: 'left center',
+                        transformStyle: 'preserve-3d',
+                    }}
                 >
                 <Image src={notebookInside} alt="Right Page" fill style={{ objectFit: 'cover', objectPosition: 'right' }} />
                 
