@@ -71,7 +71,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
                     style={{ width: '10%', zIndex: 10 }}
                 >
-                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={selectedIndex + 1} endIndex={tabs.length} left={true}/>
+                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={selectedIndex + 1} endIndex={tabs.length} left={true} cover={false}/>
                 </motion.div>
 
                 {/* Right-side Tabs after flip */}
@@ -82,7 +82,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
                     style={{ width: '10%', zIndex: 10 }}
                 >
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex + 1} left={false}/>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex + 1} left={false} cover={false}/>
                 </motion.div>
             </motion.div>
         <div className="relative" style={{ width: '13vw', height: '40vh' }}>
@@ -141,7 +141,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     transition={{ duration: 0.7, ease: 'easeInOut' }}
                     style={{ width: '10%', right:"0%", zIndex: 30 }}
                 >
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true} left={false}/>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true} left={false} cover={true}/>
                 </motion.div>
             </motion.div>
           </div>
