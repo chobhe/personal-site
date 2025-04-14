@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-no-dividers.png';
 import notebookInside from '@/assets/images/notebook-open.png';
@@ -24,32 +24,6 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState('About Me');
-
-    // const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
-    const [rightFlipAngle, setRightFlipAngle] = useState(0);
-    const [leftFlipAngle, setLeftFlipAngle] = useState(0);
-
-
-    // const handleTabClick = (tabName: string, fromLeft: boolean) => {
-    //     setSelectedTab(tabName);
-    //     setFlipDirection(fromLeft ? 'left' : 'right');
-
-    //     setTimeout(() => {
-    //         setFlipDirection(null);
-    //     }, 700); // reset after animation
-    //   };
-
-      const handleTabClick = (tabName: string, fromLeft: boolean) => {
-        setSelectedTab(tabName);
-        if (fromLeft) {
-            setLeftFlipAngle(prev => prev + 180); // left page flips to right
-        } else {
-            setRightFlipAngle(prev => prev - 180); // right page flips to left
-        }
-
-
-      };
-
 
     var selectedIndex =0 
     for (let i = 0; i < tabs.length; i++) {
@@ -79,69 +53,12 @@ export default function NotebookFlip({ title = 'charlie he' }) {
             transition={{ duration: 1, ease: 'easeInOut' }}
             style={{ pointerEvents: 'none' }}
             >
-                {/* Notebook Background */}
-                <Image src={notebookInside} alt="Notebook Inside Background" fill style={{ objectFit: 'cover', objectPosition: 'center' }} />
-
-                {/* LEFT side of notebook */}
-                <motion.div
-                animate={{
-                    rotateY: rightFlipAngle,
-                    zIndex:20
-                }}
-                    initial={false}
-                    transition={{ duration: 0.7, ease: 'easeInOut' }} // no duration if flipDirection = null
-                    style={{
-                        width: '50%',
-                        height: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        overflow: 'hidden',
-                        transformOrigin: 'right center',
-                        transformStyle: 'preserve-3d',
-                    }}
-                >
-                <Image src={notebookInside} alt="Left Page" fill style={{ objectFit: 'cover', objectPosition: 'left' }} />
-                
-                {/* LEFT tabs here */}
-                <NotebookTabs 
-                    selectedTab={selectedTab} 
-                    setSelectedTab={(tab) => handleTabClick(tab, true)}
-                    left={true}
-                    cover={false}
+                <Image
+                    src={notebookInside}
+                    alt="Notebook Inside"
+                    fill
+                    style={{ objectFit: 'contain'}}
                 />
-                </motion.div>
-
-                {/* RIGHT tabs here */}
-                <motion.div
-                animate={{
-                    rotateY: leftFlipAngle,
-                    zIndex:20
-                }}
-                    initial={false}
-                    transition={{ duration: 0.7, ease: 'easeInOut' }} // no duration if flipDirection = null
-                    style={{
-                        width: '50%',
-                        height: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        overflow: 'hidden',
-                        transformOrigin: 'left center',
-                        transformStyle: 'preserve-3d',
-                    }}
-                >
-                <Image src={notebookInside} alt="Right Page" fill style={{ objectFit: 'cover', objectPosition: 'right' }} />
-                
-                {/* RIGHT tabs here */}
-                <NotebookTabs 
-                    selectedTab={selectedTab} 
-                    setSelectedTab={(tab) => handleTabClick(tab, false)}
-                    left={false}
-                    cover={false}
-                />
-                </motion.div>
-                    
 
                  {/* Left-side Tabs after flip */}
                 <motion.div
@@ -149,12 +66,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     initial={{ x: '-2vw', opacity: 0 }}
                     animate={{ x: isOpen ? '0vw' : '-2vw', opacity: isOpen ? 1 : 0 }}
                     transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
-                    style={{ 
-                        width: '10%', 
-                        zIndex: 10,
-                    }}
+                    style={{ width: '10%', zIndex: 10 }}
                 >
-                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, true)} startIndex={selectedIndex + 1} endIndex={tabs.length} left={true} cover={false}/>
+                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={selectedIndex} left={true} cover={false}/>
                 </motion.div>
 
                 {/* Right-side Tabs after flip */}
@@ -163,12 +77,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     initial={{ x: '2vw', opacity: 0 }}
                     animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
                     transition={{ duration: 1, ease: 'easeInOut', delay: 0.4 }}
-                    style={{ 
-                        width: '10%', 
-                        zIndex: 10,
-                     }}
+                    style={{ width: '10%', zIndex: 10 }}
                 >
-                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, false)} startIndex={0} endIndex={selectedIndex + 1} left={false} cover={false}/>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={selectedIndex} endIndex={tabs.length} left={false} cover={false}/>
                 </motion.div>
             </motion.div>
         <div className="relative" style={{ width: '13vw', height: '40vh' }}>
