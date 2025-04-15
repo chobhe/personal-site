@@ -32,14 +32,24 @@ export default function NotebookFlip({ title = 'charlie he' }) {
     const [flippingStartinIndex, setFlippingStartingIndex] = useState(0);
     const [flippingEndingIndex, setFlippingEndingIndex] = useState(tabs.length);
 
-    const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
+    const [flipCount, setFlipCount] = useState(1);
 
-    const handleTabClick = (tabName: string, fromLeft: boolean) => {
-        setFlipDirection(fromLeft ? 'right' : 'left');
+    const handleTabClick = (tabName: string, flipDirection: string) => {
+        if (flipDirection === 'left' && flipCount < 0) {
+            setFlipCount(flipCount * -1 + 1);
+        } else if (flipDirection === 'right' && flipCount > 0) {
+            setFlipCount(flipCount * -1 - 1);
+        } else if (flipDirection === 'left' && flipCount > 0) {
+            setFlipCount(flipCount + 1);
+        } else if (flipDirection === 'right' && flipCount < 0) {
+            setFlipCount(flipCount - 1);
+        } else {
+
+        }
         setSelectedTab(tabName);
 
-        console.log('fromLeft:', fromLeft);
         console.log('Selected tab:', tabName);
+        console.log('Flip count:', flipCount);
         console.log('Flip direction:', flipDirection);
         
         // Reset flip direction after the animation duration (700ms)
@@ -56,15 +66,15 @@ export default function NotebookFlip({ title = 'charlie he' }) {
             }
         }
 
-        console.log('Flip direction UPDATED:', flipDirection);
-        if (flipDirection === 'left') {
+        console.log('Flip direction UPDATED:', flipCount);
+        if (flipCount > 0) {
             setFlippingStartingIndex(leftEndingIndex);
             setFlippingEndingIndex(selectedIndex);
             setLeftStartingIndex(0);
             // Don't set leftEndingIndex we keep it at what it was before
             setRightStartingIndex(selectedIndex);
             setRightEndingIndex(tabs.length);
-        } else if (flipDirection === 'right') {
+        } else if (flipCount < 0) {
             setLeftStartingIndex(0);
             setLeftEndingIndex(selectedIndex);
             setFlippingStartingIndex(selectedIndex);
@@ -72,7 +82,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
             // Don't set rightStartingIndex we keep it at what it was before
             setRightEndingIndex(tabs.length);
         }
-    }, [flipDirection]);
+    }, [flipCount]);
 
 
 
@@ -102,6 +112,54 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     style={{ objectFit: 'contain'}}
                 />
 
+            /**
+
+            { /**
+                <div
+                className="absolute top-0 right-0"
+                style={{
+                    width: '50%',
+                    height: '100%',
+                }}
+                >
+                    {
+                        tabs.map((tab) => {
+                            <motion.div
+                            className="absolute top-0 right-0"
+                            initial={false}
+                            animate={{
+                                rotateY:
+                                flipCount > 0 ? [0, 180] :
+                                flipCount < 0 ? [180,0] :
+                                0,
+                                zIndex: flipCount != 0 ? 20 : 5,
+                            }}
+                            transition={{ duration: 0.7, ease: 'easeInOut' }}
+                            style={{
+                                width: '50%',
+                                height: '100%',
+                                transformOrigin: 'left center',
+                                transformStyle: 'preserve-3d',
+                            }}
+                            >
+                                <motion.div
+                                    className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
+                                    initial={{ x: '2vw', opacity: 0 }}
+                                    animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
+                                    style={{ width: '20%', zIndex: 10 }}
+                                >
+                                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, flipCount > 0 ? 'right' : 'left')}  startIndex={flippingStartinIndex} endIndex={flippingEndingIndex} left={false} cover={false}/>
+                                </motion.div>
+                            </motion.div>
+                        })
+                    }
+
+                </div>
+                 */
+                }
+
+                
+
 
                 {/* Flipping right half */}
                 <motion.div
@@ -109,10 +167,10 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 initial={false}
                 animate={{
                     rotateY:
-                      flipDirection === 'left' ? [0, 180] :
-                      flipDirection === 'right' ? [180,0] :
+                      flipCount > 0 ? [0, 180] :
+                      flipCount < 0 ? [180,0] :
                       0,
-                    zIndex: flipDirection ? 20 : 5,
+                    zIndex: flipCount != 0 ? 20 : 5,
                   }}
                 transition={{ duration: 0.7, ease: 'easeInOut' }}
                 style={{
@@ -129,7 +187,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
                         style={{ width: '20%', zIndex: 10 }}
                     >
-                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, flipDirection === 'left' ? true : false)}  startIndex={flippingStartinIndex} endIndex={flippingEndingIndex} left={false} cover={false}/>
+                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, flipCount > 0 ? 'right' : 'left')}  startIndex={flippingStartinIndex} endIndex={flippingEndingIndex} left={false} cover={false}/>
                     </motion.div>
                 </motion.div>
 
@@ -140,7 +198,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
                         style={{ width: '10%', zIndex: 10 }}
                 >
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, false)}  startIndex={rightStartingIndex} endIndex={rightEndingIndex} left={false} cover={false}/>
+                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, 'left')}  startIndex={rightStartingIndex} endIndex={rightEndingIndex} left={false} cover={false}/>
                 </motion.div>
 
                  {/* Left-side Tab */}
@@ -150,7 +208,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     animate={{ x: isOpen ? '0vw' : '-2vw', opacity: isOpen ? 1 : 0 }}
                     style={{ width: '10%', zIndex: 10 }}
                 >
-                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={leftStartingIndex} endIndex={leftEndingIndex} left={true} cover={false}/>
+                        <NotebookTabs selectedTab={selectedTab} setSelectedTab={(tab) => handleTabClick(tab, 'right')} startIndex={leftStartingIndex} endIndex={leftEndingIndex} left={true} cover={false}/>
                 </motion.div>
         </motion.div>
             
