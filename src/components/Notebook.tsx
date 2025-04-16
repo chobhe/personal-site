@@ -44,7 +44,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
 
       };    
 
-    var selectedIndex =0 
+    var selectedIndex = 0 
     for (let i = 0; i < tabs.length; i++) {
         if (tabs[i].name === selectedTab) {
             selectedIndex = i;
@@ -85,11 +85,12 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 {
                     tabs.map((tab) => (
                         <motion.div
+                        key={tab.name}
                         className="absolute top-0 right-0"
                         initial={false}
                         animate={{
                             rotateY:
-                            !tabPositions[tab.name] ? [0, 180] :
+                            tabPositions[tab.name] ? [0, 180] :
                             tabPositions[tab.name]? [180,0] :
                             0,
                             zIndex: 20,
@@ -98,7 +99,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         style={{
                             width: '50%',
                             height: '100%',
-                            transformOrigin: 'left center',
+                            transformOrigin: 'left center', 
                             transformStyle: 'preserve-3d',
                         }}
                         >
@@ -171,7 +172,13 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                     transition={{ duration: 0.7, ease: 'easeInOut' }}
                     style={{ width: '10%', right:"0%", zIndex: 30 }}
                 >
-                    <NotebookTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} startIndex={0} endIndex={tabs.length} stopPropagation={true} left={false} cover={true}/>
+                    {
+                    tabs.map((tab) => (
+                        <div key={tab.name}>
+                            <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={tab.name} currentTabLeft={tabPositions[tab.name]} stopPropagation={true} cover={true}/>
+                        </div>
+                    ))
+                }
                 </motion.div>
             </motion.div>
           </div>
