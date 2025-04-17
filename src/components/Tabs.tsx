@@ -38,9 +38,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
 
 
   // Determine offset direction and value
-  const cropStyle = currentTabLeft
-  ? { left: `${tab.crop}%` }    // crop from left side if tabs on left
-  : { right: `${tab.crop}%` };  // crop from right side if tabs on right
+  const cropStyle ={ right: `${tab.crop}%` };  // crop from right side if tabs on right
 
   const onClickFunction = (event: React.MouseEvent) => {
     setSelectedTabName(tab.name);
@@ -52,7 +50,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
   {
     return (
     <div className="h-full w-full pointer-events-none" style={{ 
-        left:  currentTabLeft ? "-95%" : "100%", 
+        left:   currentTabLeft ? "95%" : "100%", 
         position: 'absolute' 
     }}>
       
@@ -62,8 +60,8 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
           className={`absolute flex pointer-events-auto ${ currentTabLeft ? 'justify-start' : 'justify-end'}`}
           style={{
             top: tab.topOffset,
-            left:  currentTabLeft ? 0 : undefined,    // anchors left side if left is true
-            right:  currentTabLeft ? undefined : 0,   // anchors right side if left is false
+            left:   currentTabLeft ? 0 : undefined,   // anchors right side if left is false
+            right:   currentTabLeft ? undefined:0,   // anchors right side if left is false
             width: isSelected && cover === false ? '140%' : '100%',
             zIndex: isSelected ? 20 : 10,
             paddingTop,
@@ -79,7 +77,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
               src={tab.asset}
               alt={`${tab.name} Tab`}
               fill
-              style={{objectPosition: currentTabLeft ? 'right':'left', objectFit: 'cover', backfaceVisibility: 'hidden' }}
+              style={{ objectFit: 'cover'}}
             />
           </div>
         </button>

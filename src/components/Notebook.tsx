@@ -24,6 +24,12 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState('About Me');
+    const [isAnimating, setIsAnimating] = useState<Record<string, boolean>>({
+        'About Me': false,
+        'Work History': false,
+        'Lists': false,
+      });
+
 
     // All the tabs start on the right side
     const [tabPositions, setTabPositions] = useState<Record<string, boolean>>({
@@ -31,16 +37,44 @@ export default function NotebookFlip({ title = 'charlie he' }) {
         'Work History': false,
         'Lists': false,
       });
-
-
-
    
 
     // TODO: Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
     const handleTabClick = (tabName: string, flipDirection: string) => {
         setSelectedTab(tabName);
 
-        // TODO: Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
+        // Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
+        var tabIndex = tabs.findIndex((tab) => tab.name === tabName);
+        if (flipDirection === 'left') {
+            // when flipping a tab left we need to flip all tabs above it too because the tabs are currently on the right side
+            for (let i = 0; i < tabIndex; i++) {
+                setTabPositions((prev) => {
+                    // Create a shallow copy of the previous state
+                    const updatedPositions = { ...prev };
+                  
+                    // Set the specific tab's position to true(which sets it to be on the left side)
+                    updatedPositions[tabs[i].name] = true;
+                  
+                    // Return the updated object
+                    return updatedPositions;
+                  }
+                );
+            }
+        } else if (flipDirection === 'right') {
+            // when flipping a tab right we need to flip all tabs below it too because the tabs are currently on the left side
+            for (let i = tabIndex; i < tabs.length; i++) {
+                setTabPositions((prev) => {
+                    // Create a shallow copy of the previous state
+                    const updatedPositions = { ...prev };
+                  
+                    // Set the specific tab's position to false (which sets it to be on the right side)
+                    updatedPositions[tabs[i].name] = false;
+                  
+                    // Return the updated object
+                    return updatedPositions;
+                  });
+            }
+        }
 
       };    
 
@@ -89,13 +123,12 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         className="absolute top-0 right-0"
                         initial={false}
                         animate={{
-                            rotateY:
-                            tabPositions[tab.name] ? [0, 180] :
-                            tabPositions[tab.name]? [180,0] :
-                            0,
-                            zIndex: 20,
-                        }}
-                        transition={{ duration: 0.7, ease: 'easeInOut' }}
+                            rotateY: tabPositions[tab.name] ? [0, 180] : [180, 0],
+                            zIndex: isAnimating[tab.name] || !tabPositions[tab.name] ? 0 : -5, // clearly use state here
+                          }}
+                          transition={{ duration: 0.7, ease: 'easeInOut' }}
+                          onAnimationStart={() => setIsAnimating(prev => ({ ...prev, [tab.name]: true }))}
+                          onAnimationComplete={() => setIsAnimating(prev => ({ ...prev, [tab.name]: false }))}
                         style={{
                             width: '50%',
                             height: '100%',
