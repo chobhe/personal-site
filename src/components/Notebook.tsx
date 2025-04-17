@@ -124,11 +124,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         initial={false}
                         animate={{
                             rotateY: tabPositions[tab.name] ? [0, 180] : [180, 0],
-                            zIndex: isAnimating[tab.name] || !tabPositions[tab.name] ? 0 : -5, // clearly use state here
+                            zIndex: 0, // clearly use state here
                           }}
                           transition={{ duration: 0.7, ease: 'easeInOut' }}
-                          onAnimationStart={() => setIsAnimating(prev => ({ ...prev, [tab.name]: true }))}
-                          onAnimationComplete={() => setIsAnimating(prev => ({ ...prev, [tab.name]: false }))}
                         style={{
                             width: '50%',
                             height: '100%',
@@ -140,10 +138,22 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                                 className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
                                 initial={{ x: '2vw', opacity: 0 }}
                                 animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
-                                style={{ width: '20%', zIndex: 10 }}
+                                style={{ width: '20%', zIndex:20 }}
                             >
                                 <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={tab.name} currentTabLeft={tabPositions[tab.name]} stopPropagation={false} cover={false}/>
                             </motion.div>
+                            <div style={{ position: 'absolute', inset: 0, zIndex: 5 }}>
+                                <Image
+                                    src={notebookInside}
+                                    alt="Notebook Inside Right Half"
+                                    fill
+                                    style={{
+                                    objectFit: 'cover',        
+                                    objectPosition: 'right',
+                                    zIndex: 10
+                                    }}
+                                />
+                            </div>
                         </motion.div>
                     ))
                 }

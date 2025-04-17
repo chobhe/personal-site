@@ -9,7 +9,7 @@ interface Tab {
   name: string;
   asset: StaticImageData;
   topOffset: string; // vertical offset
-  crop?: number; // horizontal offset
+  crop: number; // horizontal offset
 }
 
 interface NotebookTabsProps {
@@ -38,7 +38,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
 
 
   // Determine offset direction and value
-  const cropStyle ={ right: `${tab.crop}%` };  // crop from right side if tabs on right
+  const cropStyle ={ right: `${currentTabLeft ? tab.crop + 10 :tab.crop}%` };  
 
   const onClickFunction = (event: React.MouseEvent) => {
     setSelectedTabName(tab.name);
@@ -50,7 +50,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
   {
     return (
     <div className="h-full w-full pointer-events-none" style={{ 
-        left:   currentTabLeft ? "95%" : "100%", 
+        left:   currentTabLeft ? "100%" : "100%", 
         position: 'absolute' 
     }}>
       
@@ -69,16 +69,24 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
         >
 
           {/* Inner div positions image to create crop effect */}
-          <div
+          <div 
             className="absolute inset-0"
-            style={cropStyle}
+            style = {{
+              left: `${currentTabLeft ? '10%' :'0%'}`,
+            }}
           >
-            <Image
-              src={tab.asset}
-              alt={`${tab.name} Tab`}
-              fill
-              style={{ objectFit: 'cover'}}
-            />
+
+            <div
+              className="absolute inset-0"
+              style={cropStyle}
+            >
+              <Image
+                src={tab.asset}
+                alt={`${tab.name} Tab`}
+                fill
+                style={{ objectFit: 'cover'}}
+              />
+            </div>
           </div>
         </button>
       </div>
