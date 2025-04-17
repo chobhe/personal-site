@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-no-dividers.png';
@@ -21,15 +21,11 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 // 7. pre click make the notebook draggable \
 // 8. Pulse the tabs so it's obvious to click on them
 
+// TODO: Make the tabs highest zIndex when animating
+
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState('About Me');
-    const [isAnimating, setIsAnimating] = useState<Record<string, boolean>>({
-        'About Me': false,
-        'Work History': false,
-        'Lists': false,
-      });
-
 
     // All the tabs start on the right side
     const [tabPositions, setTabPositions] = useState<Record<string, boolean>>({
@@ -41,6 +37,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
 
     // TODO: Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
     const handleTabClick = (tabName: string, flipDirection: string) => {
+        // Explicitly prevent clicks if animation is already happening        
         setSelectedTab(tabName);
 
         // Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
@@ -97,7 +94,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
       >
         
         {/* Static Inside (background) */}
-        <div className="relative flex items-center justify-center" style={{ width: '33vw', height: '50vh' }}>
+        <div className="relative flex items-center justify-center" 
+            style={{ width: '33vw', height: '50vh' }}
+        >
             <motion.div
             className="absolute inset-0"
             initial={false}
@@ -124,9 +123,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         initial={false}
                         animate={{
                             rotateY: tabPositions[tab.name] ? [0, 180] : [180, 0],
-                            zIndex: 0, // clearly use state here
-                          }}
-                          transition={{ duration: 0.7, ease: 'easeInOut' }}
+                            zIndex: (tab.name === selectedTab ? 30 : 5),
+                        }}
+                        transition={{ duration: 0.7, ease: 'easeInOut' }}
                         style={{
                             width: '50%',
                             height: '100%',
@@ -142,17 +141,36 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                             >
                                 <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={tab.name} currentTabLeft={tabPositions[tab.name]} stopPropagation={false} cover={false}/>
                             </motion.div>
-                            <div style={{ position: 'absolute', inset: 0, zIndex: 5 }}>
-                                <Image
+                            <div
+                            className="absolute"
+                            style={{
+                                width: '100%',            
+                                height: '100%',
+                                overflow: 'hidden',       
+                                right: 0,
+                                top: 0,
+                                zIndex: 5,
+                            }}
+                            >
+                                <div
+                                    style={{
+                                    position: 'absolute',
+                                    width: '200%',          
+                                    height: '100%',
+                                    left: '-100%',           
+                                    top: 0,
+                                }}
+                                >
+                                    <Image
                                     src={notebookInside}
                                     alt="Notebook Inside Right Half"
                                     fill
                                     style={{
-                                    objectFit: 'cover',        
-                                    objectPosition: 'right',
-                                    zIndex: 10
+                                        objectFit: 'contain',  // maintain exact aspect ratio
+                                        objectPosition: 'center',
                                     }}
                                 />
+                                </div>
                             </div>
                         </motion.div>
                     ))
