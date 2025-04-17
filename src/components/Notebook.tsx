@@ -12,16 +12,15 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 // 1. pre click make sure the notebook opening is invisible -> DONE
 // 1.5 make sure the notebook cover clickbox is smaller -> DONE
 // 2  post click make the background still scrollable(DONE) and pre click while hovering over notebook -> DONE
-// 3. make the notebook on click the tabs (Make the tabs their own component)
+// 3. make the notebook on click the tabs (Make the tabs their own component) -> DONE
 // 3.5 I feel like I essentially need to anchor the tabs from the cover to the inside then whichever one is clicked should rotate with the cover and anchor on the other side
+// 5. make the tabs visible when the notebook is open so the user can use them to navigate -> DONE
+// 5.5 when the tabs get clicked it should look like the page is flipping to the next page -> DONE
+// TODO: Make the tabs highest zIndex when animating
 // 4. design things on the tabs 
-// 5. make the tabs visible when the notebook is open so the user can use them to navigate
-// 5.5 when the tabs get clicked it should look like the page is flipping to the next page
 // 6. Post click make the notebook closable by clicking on the background
-// 7. pre click make the notebook draggable \
 // 8. Pulse the tabs so it's obvious to click on them
 
-// TODO: Make the tabs highest zIndex when animating
 
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
