@@ -25,6 +25,7 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 export default function NotebookFlip({ title = 'charlie he' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState('About Me');
+    const [frontTab, setFrontTab] = useState(selectedTab);
 
     // All the tabs start on the right side
     const [tabPositions, setTabPositions] = useState<Record<string, boolean>>({
@@ -34,44 +35,34 @@ export default function NotebookFlip({ title = 'charlie he' }) {
       });
    
 
-    // TODO: Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
+    // Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
     const handleTabClick = (tabName: string, flipDirection: string) => {
         // Explicitly prevent clicks if animation is already happening        
         setSelectedTab(tabName);
 
+        // Set a safety timeout to set frontTab in case animation complete doesn't fire
+        setTimeout(() => {
+            if (selectedTab === tabName) { // Check if this is still the selected tab
+              setFrontTab(tabName);
+            }
+          }, 800);
+
         // Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
         var tabIndex = tabs.findIndex((tab) => tab.name === tabName);
-        if (flipDirection === 'left') {
-            // when flipping a tab left we need to flip all tabs above it too because the tabs are currently on the right side
-            for (let i = 0; i < tabIndex; i++) {
-                setTabPositions((prev) => {
-                    // Create a shallow copy of the previous state
-                    const updatedPositions = { ...prev };
-                  
-                    // Set the specific tab's position to true(which sets it to be on the left side)
+        setTabPositions((prev) => {
+            const updatedPositions = { ...prev };
+            if (flipDirection === 'left') {
+                for (let i = 0; i < tabIndex; i++) {
                     updatedPositions[tabs[i].name] = true;
-                  
-                    // Return the updated object
-                    return updatedPositions;
-                  }
-                );
-            }
-        } else if (flipDirection === 'right') {
-            // when flipping a tab right we need to flip all tabs below it too because the tabs are currently on the left side
-            for (let i = tabIndex; i < tabs.length; i++) {
-                setTabPositions((prev) => {
-                    // Create a shallow copy of the previous state
-                    const updatedPositions = { ...prev };
-                  
-                    // Set the specific tab's position to false (which sets it to be on the right side)
+                }
+            } else if (flipDirection === 'right') {
+                for (let i = tabIndex; i < tabs.length; i++) {
                     updatedPositions[tabs[i].name] = false;
-                  
-                    // Return the updated object
-                    return updatedPositions;
-                  });
+                }
             }
-        }
 
+            return updatedPositions;
+        })
       };    
 
     var selectedIndex = 0 
@@ -115,14 +106,31 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                 />
 
                 {
-                    tabs.map((tab) => (
+                    tabs.map((currentTab) => {
+                        var tabIndex = tabs.findIndex((tab) => tab.name === currentTab.name);
+                        var frontTabIndex = tabs.findIndex((tab) => tab.name === frontTab);
+                        var zIndex = frontTab === currentTab.name ? 30 : 5;
+                        // If that tab is on the right side and the tab is above the selected tab, set a high zIndex for flipping.
+                        // Post flipping we want the tab closest to the selected tab to have the highest zIndex
+                        if (!tabPositions[currentTab.name])  { // on the right side
+                            if (tabIndex >= frontTabIndex) { // the tab and below the selected tab
+                                zIndex = 10 * (tabs.length - tabIndex);
+                            } 
+                        } else if (tabPositions[currentTab.name]) { // on the left side
+                            if (tabIndex < frontTabIndex) { // the tab and above the selected tab
+                                zIndex = 10 * (tabIndex);
+                            }
+                        }
+
+
+                        return (
                         <motion.div
-                        key={tab.name}
+                        key={currentTab.name}
                         className="absolute top-0 right-0"
                         initial={false}
                         animate={{
-                            rotateY: tabPositions[tab.name] ? [0, 180] : [180, 0],
-                            zIndex: (tab.name === selectedTab ? 30 : 5),
+                            rotateY: tabPositions[currentTab.name] ? 180 : 0,
+                            zIndex: zIndex,
                         }}
                         transition={{ duration: 0.7, ease: 'easeInOut' }}
                         style={{
@@ -131,6 +139,12 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                             transformOrigin: 'left center', 
                             transformStyle: 'preserve-3d',
                         }}
+                        onAnimationComplete={() => {
+                            if (selectedTab === currentTab.name) {
+                              setFrontTab(currentTab.name);
+                              console.log('Setting frontTab to', currentTab.name);
+                            }
+                        }}
                         >
                             <motion.div
                                 className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
@@ -138,7 +152,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                                 animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
                                 style={{ width: '20%', zIndex:20 }}
                             >
-                                <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={tab.name} currentTabLeft={tabPositions[tab.name]} stopPropagation={false} cover={false}/>
+                                <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={currentTab.name} currentTabLeft={tabPositions[currentTab.name]} stopPropagation={false} cover={false}/>
                             </motion.div>
                             <div
                             className="absolute"
@@ -172,7 +186,8 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                                 </div>
                             </div>
                         </motion.div>
-                    ))
+                        )
+                    })
                 }
         </motion.div>
             
