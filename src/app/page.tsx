@@ -11,7 +11,7 @@ export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [collageHeight, setCollageHeight] = useState(0); // Default initial height
   const [collages, setCollages] = useState([-1, 0, 1]); // Indexes for rendered collages
-
+  const [notebookOpen, setNotebookOpen] = useState(false);
   useEffect(() => {
     setCollageHeight(window.innerHeight); // Runs only on client-side after component mounts
 
@@ -68,11 +68,20 @@ export default function Page() {
         ))}
 
 
+        {/* Overlay for closing notebook by clicking outside */}
+        {notebookOpen && (
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setNotebookOpen(false)}
+            />
+        )}
+
+
         {/* Notebook Overlay */}
           <div
-            className="sticky bottom-1/2 transform translate-y-1/2 inset-0 flex justify-center items-center"
+            className="sticky bottom-1/2 transform translate-y-1/2 inset-0 flex justify-center items-center z-20"
           >
-            <Notebook title="charlie he" />
+              <Notebook title="charlie he" notebookOpen={notebookOpen} setNotebookOpen={setNotebookOpen} />
         </div>
       </div>
     </div>

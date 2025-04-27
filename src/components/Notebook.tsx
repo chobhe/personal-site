@@ -1,29 +1,29 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-no-dividers.png';
 import notebookInside from '@/assets/images/notebook-open.png';
-import NotebookTabs, {tabs} from '@/components/Tabs';
+import NotebookTabs, { tabs } from '@/components/Tabs';
+
+
+interface NotebookProps {
+  title: string;
+  notebookOpen: boolean;
+  setNotebookOpen: (open: boolean) => void;
+}
 
 
 // TODOs
-// 1. pre click make sure the notebook opening is invisible -> DONE
-// 1.5 make sure the notebook cover clickbox is smaller -> DONE
-// 2  post click make the background still scrollable(DONE) and pre click while hovering over notebook -> DONE
-// 3. make the notebook on click the tabs (Make the tabs their own component) -> DONE
-// 3.5 I feel like I essentially need to anchor the tabs from the cover to the inside then whichever one is clicked should rotate with the cover and anchor on the other side
-// 5. make the tabs visible when the notebook is open so the user can use them to navigate -> DONE
-// 5.5 when the tabs get clicked it should look like the page is flipping to the next page -> DONE
-// 4. design things on the tabs 
-// 6. Post click make the notebook closable by clicking on the background
-// 8. Pulse the tabs so it's obvious to click on them
+// 6. Post click make the notebook closable by clicking on the background -> Partially done 
 // EC: Make the page flipping perfect
+// Put content on the pages 
+// Animate the content like it's being handwritten in real time
 
 
-export default function NotebookFlip({ title = 'charlie he' }) {
-    const [isOpen, setIsOpen] = useState(false);
+
+export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNotebookOpen }: NotebookProps) {
     const [selectedTab, setSelectedTab] = useState('About Me');
     const [frontTab, setFrontTab] = useState(selectedTab);
 
@@ -56,8 +56,6 @@ export default function NotebookFlip({ title = 'charlie he' }) {
 
             return updatedPositions;
         });
-        
-
       };    
 
     var selectedIndex = 0 
@@ -70,188 +68,192 @@ export default function NotebookFlip({ title = 'charlie he' }) {
 
 
 
-
-
     return (
-      <div
-        className="inline-block font-['Roboto'] relative"
-        style={{ perspective: '1000px'}}
-      >
-        
-        {/* Static Inside (background) */}
-        <div className="relative flex items-center justify-center" 
-            style={{ width: '33vw', height: '50vh' }}
+      <>
+        {/* Notebook content, stops propagation so clicks inside don't close */}
+        <div
+          className="inline-block font-['Roboto'] relative z-20"
+          style={{ perspective: '1000px' }}
+          onClick={e => e.stopPropagation()}
         >
-            <motion.div
-            className="absolute inset-0"
-            initial={false}
-            animate={{
-                scale: isOpen ? 1.8 : 1,
-                opacity: isOpen ? 1 : 0, // Only affects notebook inside
+          
+          {/* Static Inside (background) */}
+          <div className="relative flex items-center justify-center" 
+              style={{ width: '33vw', height: '50vh' }}
+          >
+              <motion.div
+              className="absolute inset-0"
+              initial={false}
+              animate={{
+                  scale: notebookOpen ? 1.8 : 1,
+                  opacity: notebookOpen ? 1 : 0, // Only affects notebook inside
 
-            }}
-            transition={{ duration: 1, ease: 'easeInOut' }}
-            style={{ pointerEvents: 'none' }}
-            >
-                <Image
-                    src={notebookInside}
-                    alt="Notebook Inside"
-                    fill
-                    style={{ objectFit: 'contain'}}
-                />
+              }}
+              transition={{ duration: 1, ease: 'easeInOut' }}
+              style={{ pointerEvents: 'none' }}
+              >
+                  <Image
+                      src={notebookInside}
+                      alt="Notebook Inside"
+                      fill
+                      style={{ objectFit: 'contain'}}
+                  />
 
-                {
-                    tabs.map((currentTab) => {
-                        var tabIndex = tabs.findIndex((tab) => tab.name === currentTab.name);
-                        var frontTabIndex = tabs.findIndex((tab) => tab.name === frontTab);
-                        var zIndex = frontTab === currentTab.name ? 30 : 5;
-                        // If that tab is on the right side and the tab is above the selected tab, set a high zIndex for flipping.
-                        // Post flipping we want the tab closest to the selected tab to have the highest zIndex
-                        if (!tabPositions[currentTab.name])  { // on the right side
-                            if (tabIndex >= frontTabIndex) { // the tab and below the selected tab
-                                zIndex = 10 * (tabs.length - tabIndex);
-                            } 
-                        } else if (tabPositions[currentTab.name]) { // on the left side
-                            if (tabIndex < frontTabIndex) { // the tab and above the selected tab
-                                zIndex = 10 * (tabIndex);
-                            }
-                        }
+                  {
+                      tabs.map((currentTab) => {
+                          var tabIndex = tabs.findIndex((tab) => tab.name === currentTab.name);
+                          var frontTabIndex = tabs.findIndex((tab) => tab.name === frontTab);
+                          var zIndex = frontTab === currentTab.name ? 30 : 5;
+                          // If that tab is on the right side and the tab is above the selected tab, set a high zIndex for flipping.
+                          // Post flipping we want the tab closest to the selected tab to have the highest zIndex
+                          if (!tabPositions[currentTab.name])  { // on the right side
+                              if (tabIndex >= frontTabIndex) { // the tab and below the selected tab
+                                  zIndex = 10 * (tabs.length - tabIndex);
+                              } 
+                          } else if (tabPositions[currentTab.name]) { // on the left side
+                              if (tabIndex < frontTabIndex) { // the tab and above the selected tab
+                                  zIndex = 10 * (tabIndex);
+                              }
+                          }
 
 
 
-                        return (
-                        <motion.div
-                        key={currentTab.name}
-                        className="absolute top-0 right-0"
-                        initial={false}
-                        animate={{
-                            rotateY: tabPositions[currentTab.name] ? 180 : 0,
-                            zIndex: zIndex,
-                        }}
-                        transition={{ duration: 0.7, ease: 'easeInOut' }}
-                        style={{
-                            width: '50%',
-                            height: '100%',
-                            transformOrigin: 'left center', 
-                            transformStyle: 'preserve-3d',
-                        }}
-                        onAnimationComplete={() => {
-                            // TODO: Only update once the animation is complete
-                            setFrontTab(selectedTab);
-                        }}
-                        >
-                            <motion.div
-                                className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
-                                initial={{ x: '2vw', opacity: 0 }}
-                                animate={{ x: isOpen ? '0vw' : '2vw', opacity: isOpen ? 1 : 0 }}
-                                style={{ width: '20%', zIndex:20 }}
-                            >
-                                <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={currentTab.name} currentTabLeft={tabPositions[currentTab.name]} stopPropagation={false} cover={false}/>
-                            </motion.div>
-                            <div
-                            className="absolute"
-                            style={{
-                                width: '100%',            
-                                height: '100%',
-                                overflow: 'hidden',       
-                                right: 0,
-                                top: 0,
-                                zIndex: 5,
-                            }}
-                            >
-                                <div
-                                    style={{
-                                    position: 'absolute',
-                                    width: '200%',          
-                                    height: '100%',
-                                    left: '-100%',           
-                                    top: 0,
-                                }}
-                                >
-                                    <Image
-                                    src={notebookInside}
-                                    alt="Notebook Inside Right Half"
-                                    fill
-                                    style={{
-                                        objectFit: 'contain',  // maintain exact aspect ratio
-                                        objectPosition: 'center',
-                                    }}
-                                />
-                                </div>
-                            </div>
-                        </motion.div>
-                        )
-                    })
-                }
-        </motion.div>
+                          return (
+                          <motion.div
+                          key={currentTab.name}
+                          className="absolute top-0 right-0"
+                          initial={false}
+                          animate={{
+                              rotateY: tabPositions[currentTab.name] ? 180 : 0,
+                              zIndex: zIndex,
+                          }}
+                          transition={{ duration: 0.7, ease: 'easeInOut' }}
+                          style={{
+                              width: '50%',
+                              height: '100%',
+                              transformOrigin: 'left center', 
+                              transformStyle: 'preserve-3d',
+                              zIndex: zIndex,
+                          }}
+                          onAnimationComplete={() => {
+                              // TODO: Handle the tab glitching when the animation is complete
+                              setFrontTab(selectedTab);
+                              
+                          }}
+                          >
+                              <motion.div
+                                  className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
+                                  initial={{ x: '2vw', opacity: 0 }}
+                                  animate={{ x: notebookOpen ? '0vw' : '2vw', opacity: notebookOpen ? 1 : 0 }}
+                                  style={{ width: '20%', zIndex:20 }}
+                              >
+                                  <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={currentTab.name} currentTabLeft={tabPositions[currentTab.name]} stopPropagation={false} cover={false}/>
+                              </motion.div>
+                              <div
+                              className="absolute"
+                              style={{
+                                  width: '100%',            
+                                  height: '100%',
+                                  overflow: 'hidden',       
+                                  right: 0,
+                                  top: 0,
+                                  zIndex: 5,
+                              }}
+                              >
+                                  <div
+                                      style={{
+                                      position: 'absolute',
+                                      width: '200%',          
+                                      height: '100%',
+                                      left: '-100%',           
+                                      top: 0,
+                                  }}
+                                  >
+                                      <Image
+                                      src={notebookInside}
+                                      alt="Notebook Inside Right Half"
+                                      fill
+                                      style={{
+                                          objectFit: 'contain',  // maintain exact aspect ratio
+                                          objectPosition: 'center',
+                                      }}
+                                  />
+                                  </div>
+                              </div>
+                          </motion.div>
+                          )
+                      })
+                  }
+          </motion.div>
             
-        <div className="relative" style={{ width: '13vw', height: '40vh' }}>
-            {/* Animated Cover (foreground) */}
-            <motion.div
-                className="absolute inset-0 origin-left"
-                initial={false}
-                animate={{ rotateY: isOpen ? -160 : 0 }}
-                transition={{ duration: 1, ease: 'easeInOut' }}
-                style={{ 
-                    transformStyle: 'preserve-3d', 
-                }}
-            >
-                <Image
-                    src={notebookCover}
-                    alt="Notebook Cover"
-                    fill
-                    style={{ 
-                        objectFit: 'contain', 
-                        backfaceVisibility: 'hidden',
-                    }}
-                />
+          <div className="relative" style={{ width: '13vw', height: '40vh' }}>
+              {/* Animated Cover (foreground) */}
+              <motion.div
+                  className="absolute inset-0 origin-left"
+                  initial={false}
+                  animate={{ rotateY: notebookOpen ? -160 : 0 }}
+                  transition={{ duration: 1, ease: 'easeInOut' }}
+                  style={{ 
+                      transformStyle: 'preserve-3d', 
+                  }}
+              >
+                  <Image
+                      src={notebookCover}
+                      alt="Notebook Cover"
+                      fill
+                      style={{ 
+                          objectFit: 'contain', 
+                          backfaceVisibility: 'hidden',
+                      }}
+                  />
 
-                {/* Small clickable area overlay (only handles clicks, no visual effect) */}
-                <button
-                    className="absolute cursor-pointer"
-                    style={{
-                        width: '90%',   // <- clearly controls clickable region width ONLY
-                        height: '90%',  
-                        top: '5%',     
-                        left: '5%',
-                        background: 'transparent', // invisible clickable area
-                        border: 'none', 
-                    }}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsOpen(!isOpen);
-                    }}
-                />
+                  {/* Small clickable area overlay (only handles clicks, no visual effect) */}
+                  <button
+                      className="absolute cursor-pointer"
+                      style={{
+                          width: '90%',   // <- clearly controls clickable region width ONLY
+                          height: '90%',  
+                          top: '5%',     
+                          left: '5%',
+                          background: 'transparent', // invisible clickable area
+                          border: 'none', 
+                      }}
+                      onClick={(e) => {
+                          e.stopPropagation();
+                          setNotebookOpen(!notebookOpen);
+                      }}
+                  />
 
-                {/* Text fades out */}
-                <motion.div
-                    className="absolute inset-0 flex items-center justify-center text-black text-xl drop-shadow -translate-y-10 pointer-events-none"
-                    initial={false}
-                    animate={{ opacity: isOpen ? 0 : 1 }}
-                >
-                {title}
-                </motion.div>
+                  {/* Text fades out */}
+                  <motion.div
+                      className="absolute inset-0 flex items-center justify-center text-black text-xl drop-shadow -translate-y-10 pointer-events-none"
+                      initial={false}
+                      animate={{ opacity: notebookOpen ? 0 : 1 }}
+                  >
+                  {title}
+                  </motion.div>
 
 
-                {/* Tabs on the cover */}
-                <motion.div
-                    className="absolute inset-y-0 flex flex-col items-end pointer-events-auto"
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: isOpen ? 0 : 1 }}
-                    transition={{ duration: 0.7, ease: 'easeInOut' }}
-                    style={{ width: '10%', right:"0%", zIndex: 30 }}
-                >
-                    {
-                    tabs.map((tab) => (
-                        <div key={tab.name}>
-                            <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={tab.name} currentTabLeft={tabPositions[tab.name]} stopPropagation={true} cover={true}/>
-                        </div>
-                    ))
-                }
-                </motion.div>
-            </motion.div>
+                  {/* Tabs on the cover */}
+                  <motion.div
+                      className="absolute inset-y-0 flex flex-col items-end pointer-events-auto"
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: notebookOpen ? 0 : 1 }}
+                      transition={{ duration: 0.7, ease: 'easeInOut' }}
+                      style={{ width: '10%', right:"0%", zIndex: 30 }}
+                  >
+                      {
+                      tabs.map((tab) => (
+                          <div key={tab.name}>
+                              <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={tab.name} currentTabLeft={tabPositions[tab.name]} stopPropagation={true} cover={true}/>
+                          </div>
+                      ))
+                  }
+                  </motion.div>
+              </motion.div>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }

@@ -4,12 +4,17 @@ import Image, { StaticImageData } from 'next/image';
 import aboutMeTab from '@/assets/images/tabs/green-divider.png';
 import workHistoryTab from '@/assets/images/tabs/grey-divider.png';
 import listsTab from '@/assets/images/tabs/white-divider.png';
+import jumpingCatGif from '@/assets/images/jumping-cat.gif';
+import sleepingCatGif from '@/assets/images/sleeping-cat.gif';
+import workingCatGif from '@/assets/images/working-cat.gif';
+
 
 interface Tab {
   name: string;
   asset: StaticImageData;
   topOffset: string; // vertical offset
   crop: number; // horizontal offset
+  iconGif: StaticImageData;
 }
 
 interface NotebookTabsProps {
@@ -23,9 +28,9 @@ interface NotebookTabsProps {
 }
 
 export const tabs: Tab[] = [
-  { name: 'About Me', asset: aboutMeTab, topOffset: '10%', crop: 50},
-  { name: 'Work History', asset: workHistoryTab, topOffset: '30%', crop: 5},
-  { name: 'Lists', asset: listsTab, topOffset: '50%', crop: 50},
+  { name: 'About Me', asset: aboutMeTab, topOffset: '15%', crop: 50, iconGif: jumpingCatGif},
+  { name: 'Work History', asset: workHistoryTab, topOffset: '30%', crop: 5, iconGif: workingCatGif},
+  { name: 'Lists', asset: listsTab, topOffset: '50%', crop: 50, iconGif: sleepingCatGif},
 ];
 
 export default function NotebookTabs({ selectedTabName, setSelectedTabName, currentTabName, currentTabLeft ,stopPropagation=false, cover=false}: NotebookTabsProps) {
@@ -86,6 +91,11 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
                 fill
                 style={{ objectFit: 'cover'}}
               />
+              <div className="absolute inset-0 flex items-center justify-center opacity-80 mix-blend-multiply">
+                <div className="w-3/4 h-3/4 flex items-center justify-center hover:animate-pulse-scale">
+                  <Image src={tab.iconGif} alt="Tab Icon" className="w-full h-full object-contain" />
+                </div>
+              </div>
             </div>
           </div>
         </button>
