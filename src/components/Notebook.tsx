@@ -16,10 +16,10 @@ import NotebookTabs, {tabs} from '@/components/Tabs';
 // 3.5 I feel like I essentially need to anchor the tabs from the cover to the inside then whichever one is clicked should rotate with the cover and anchor on the other side
 // 5. make the tabs visible when the notebook is open so the user can use them to navigate -> DONE
 // 5.5 when the tabs get clicked it should look like the page is flipping to the next page -> DONE
-// TODO: Make the tabs highest zIndex when animating
 // 4. design things on the tabs 
 // 6. Post click make the notebook closable by clicking on the background
 // 8. Pulse the tabs so it's obvious to click on them
+// EC: Make the page flipping perfect
 
 
 export default function NotebookFlip({ title = 'charlie he' }) {
@@ -40,13 +40,6 @@ export default function NotebookFlip({ title = 'charlie he' }) {
         // Explicitly prevent clicks if animation is already happening        
         setSelectedTab(tabName);
 
-        // Set a safety timeout to set frontTab in case animation complete doesn't fire
-        setTimeout(() => {
-            if (selectedTab === tabName) { // Check if this is still the selected tab
-              setFrontTab(tabName);
-            }
-          }, 800);
-
         // Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
         var tabIndex = tabs.findIndex((tab) => tab.name === tabName);
         setTabPositions((prev) => {
@@ -62,7 +55,9 @@ export default function NotebookFlip({ title = 'charlie he' }) {
             }
 
             return updatedPositions;
-        })
+        });
+        
+
       };    
 
     var selectedIndex = 0 
@@ -123,6 +118,7 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                         }
 
 
+
                         return (
                         <motion.div
                         key={currentTab.name}
@@ -140,10 +136,8 @@ export default function NotebookFlip({ title = 'charlie he' }) {
                             transformStyle: 'preserve-3d',
                         }}
                         onAnimationComplete={() => {
-                            if (selectedTab === currentTab.name) {
-                              setFrontTab(currentTab.name);
-                              console.log('Setting frontTab to', currentTab.name);
-                            }
+                            // TODO: Only update once the animation is complete
+                            setFrontTab(selectedTab);
                         }}
                         >
                             <motion.div
