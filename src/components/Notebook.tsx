@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-no-dividers.png';
 import notebookInside from '@/assets/images/notebook-open.png';
+import notebookInsideRight from '@/assets/images/notebook-open-right.png';
 import NotebookTabs, { tabs } from '@/components/Tabs';
 import { NotebookPage } from './NotebookPage';
 import ReactMarkdown from 'react-markdown';
@@ -204,27 +205,15 @@ return (
                                     transformStyle: 'preserve-3d',
                                 }}
                                 >   
-                                    <div
+                                    <Image
+                                        src={notebookInsideRight}
+                                        alt="Notebook Inside Right Half"
+                                        fill
                                         style={{
-                                        position: 'absolute',
-                                        width: '200%',          
-                                        height: '100%',
-                                        left: '-100%',           
-                                        top: 0,
-                                        transformStyle: 'preserve-3d',
-                                        backfaceVisibility: 'hidden',
-                                    }}
-                                    >
-                                        <Image
-                                            src={notebookInside}
-                                            alt="Notebook Inside Right Half"
-                                            fill
-                                            style={{
-                                                objectFit: 'contain',  // maintain exact aspect ratio
-                                                objectPosition: 'center',
-                                            }}
-                                        />
-                                    </div>
+                                            objectFit: 'contain',  // maintain exact aspect ratio
+                                            objectPosition: 'center',
+                                        }}
+                                    />
                                 </div>
                         </motion.div>
                         )
