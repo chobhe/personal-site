@@ -1,12 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import notebookCover from '@/assets/images/notebook-no-dividers.png';
 import notebookInside from '@/assets/images/notebook-open.png';
 import NotebookTabs, { tabs } from '@/components/Tabs';
+import { NotebookPage } from './NotebookPage';
+import ReactMarkdown from 'react-markdown';
 
+
+
+const tabContent = {
+  'About Me': { front: '', back: '' },
+  'Work History': { front: '', back: '' },
+  'Lists': { front: '', back: '' },
+};
 
 interface NotebookProps {
   title: string;
@@ -32,6 +41,32 @@ interface NotebookProps {
 export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNotebookOpen }: NotebookProps) {
     const [selectedTab, setSelectedTab] = useState('About Me');
     const [frontTab, setFrontTab] = useState(selectedTab);
+    const [markdownContent, setMarkdownContent] = useState(tabContent);
+
+    // Fetch markdown content when component mounts
+    useEffect(() => {
+      const fetchMarkdown = async () => {
+        try {
+          const aboutMeResponse = await fetch('/page-md-content/about-me.md');
+          const workHistoryResponse = await fetch('/page-md-content/work-history.md');
+          const listsResponse = await fetch('/page-md-content/lists.md');
+          
+          const aboutMeText = await aboutMeResponse.text();
+          const workHistoryText = await workHistoryResponse.text();
+          const listsText = await listsResponse.text();
+          
+          setMarkdownContent({
+            'About Me': { front: aboutMeText, back: '' },
+            'Work History': { front: workHistoryText, back: '' },
+            'Lists': { front: listsText, back: '' },
+          });
+        } catch (error) {
+          console.error('Error loading markdown files:', error);
+        }
+      };
+      
+      fetchMarkdown();
+    }, []);
 
     // All the tabs start on the right side
     const [tabPositions, setTabPositions] = useState<Record<string, boolean>>({
@@ -74,38 +109,40 @@ export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNo
 
 
 
-    return (
-      <>
-        {/* Notebook content, stops propagation so clicks inside don't close */}
-        <div
-          className="inline-block font-['Roboto'] relative z-20"
-          style={{ perspective: '1000px' }}
-          onClick={e => e.stopPropagation()}
-        >
+return (
+    <>
+    {/* Notebook content, stops propagation so clicks inside don't close */}
+    <div
+        className="inline-block font-['Roboto'] relative z-20"
+        style={{ perspective: '1000px' }}
+        onClick={e => e.stopPropagation()}
+    >
           
-          {/* Static Inside (background) */}
-          <div className="relative flex items-center justify-center" 
-              style={{ width: '33vw', height: '50vh' }}
-          >
-              <motion.div
-              className="absolute inset-0"
-              initial={false}
-              animate={{
-                  scale: notebookOpen ? 1.8 : 1,
-                  opacity: notebookOpen ? 1 : 0, // Only affects notebook inside
+        {/* Static Inside (background) */}
+        <div className="relative flex items-center justify-center" 
+            style={{ width: '33vw', height: '50vh' }}
+        >
+            <motion.div
+            className="absolute inset-0"
+            initial={false}
+            animate={{
+                scale: notebookOpen ? 1.8 : 1,
+                opacity: notebookOpen ? 1 : 0, // Only affects notebook inside
 
-              }}
-              transition={{ duration: 1, ease: 'easeInOut' }}
-              style={{ pointerEvents: 'none' }}
-              >
-                  <Image
-                      src={notebookInside}
-                      alt="Notebook Inside"
-                      fill
-                      style={{ objectFit: 'contain'}}
-                  />
+            }}
+            transition={{ duration: 1, ease: 'easeInOut' }}
+            style={{ pointerEvents: 'none' }}
+            >
+                <Image
+                    src={notebookInside}
+                    alt="Notebook Inside"
+                    fill
+                    style={{ objectFit: 'contain'}}
+                />
+                  
+                 
 
-                  {
+                    {
                       tabs.map((currentTab) => {
                           var tabIndex = tabs.findIndex((tab) => tab.name === currentTab.name);
                           var frontTabIndex = tabs.findIndex((tab) => tab.name === frontTab);
@@ -124,73 +161,76 @@ export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNo
 
 
 
-                          return (
-                          <motion.div
-                          key={currentTab.name}
-                          className="absolute top-0 right-0"
-                          initial={false}
-                          animate={{
-                              rotateY: tabPositions[currentTab.name] ? 180 : 0,
-                              zIndex: zIndex,
-                          }}
-                          transition={{ duration: 0.7, ease: 'easeInOut' }}
-                          style={{
-                              width: '50%',
-                              height: '100%',
-                              transformOrigin: 'left center', 
-                              transformStyle: 'preserve-3d',
-                              zIndex: zIndex,
-                          }}
-                          onAnimationComplete={() => {
-                              // TODO: Handle the tab glitching when the animation is complete
-                              setFrontTab(selectedTab);
-                              
-                          }}
-                          >
-                              <motion.div
-                                  className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
-                                  initial={{ x: '2vw', opacity: 0 }}
-                                  animate={{ x: notebookOpen ? '0vw' : '2vw', opacity: notebookOpen ? 1 : 0 }}
-                                  style={{ width: '20%', zIndex:20 }}
-                              >
-                                  <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={currentTab.name} currentTabLeft={tabPositions[currentTab.name]} stopPropagation={false} cover={false}/>
-                              </motion.div>
-                              <div
-                              className="absolute"
-                              style={{
-                                  width: '100%',            
-                                  height: '100%',
-                                  overflow: 'hidden',       
-                                  right: 0,
-                                  top: 0,
-                                  zIndex: 5,
-                              }}
-                              >
-                                  <div
-                                      style={{
-                                      position: 'absolute',
-                                      width: '200%',          
-                                      height: '100%',
-                                      left: '-100%',           
-                                      top: 0,
-                                  }}
-                                  >
-                                      <Image
-                                      src={notebookInside}
-                                      alt="Notebook Inside Right Half"
-                                      fill
-                                      style={{
-                                          objectFit: 'contain',  // maintain exact aspect ratio
-                                          objectPosition: 'center',
-                                      }}
-                                  />
-                                  </div>
-                              </div>
-                          </motion.div>
-                          )
+                        return (
+                        <motion.div
+                            key={currentTab.name}
+                            className="absolute top-0 right-0"
+                            initial={false}
+                            animate={{
+                                rotateY: tabPositions[currentTab.name] ? 180 : 0,
+                                zIndex: zIndex,
+                            }}
+                            transition={{ duration: 0.7, ease: 'easeInOut' }}
+                            style={{
+                                width: '50%',
+                                height: '100%',
+                                transformOrigin: 'left center', 
+                                transformStyle: 'preserve-3d',
+                                zIndex: zIndex,
+                            }}
+                            onAnimationComplete={() => {
+                                // TODO: Handle the tab glitching when the animation is complete
+                                setFrontTab(selectedTab);
+                                
+                            }}
+                        >
+                            <motion.div
+                                className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
+                                initial={{ x: '2vw', opacity: 0 }}
+                                animate={{ x: notebookOpen ? '0vw' : '2vw', opacity: notebookOpen ? 1 : 0 }}
+                                style={{ width: '20%', zIndex:20 }}
+                            >
+                                <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={currentTab.name} currentTabLeft={tabPositions[currentTab.name]} stopPropagation={false} cover={false}/>
+                            </motion.div>
+                                <div
+                                className="absolute"
+                                style={{
+                                    width: '100%',            
+                                    height: '100%',
+                                    overflow: 'hidden',       
+                                    right: 0,
+                                    top: 0,
+                                    zIndex: 5,
+                                    transformStyle: 'preserve-3d',
+                                }}
+                                >   
+                                    <div
+                                        style={{
+                                        position: 'absolute',
+                                        width: '200%',          
+                                        height: '100%',
+                                        left: '-100%',           
+                                        top: 0,
+                                        transformStyle: 'preserve-3d',
+                                        backfaceVisibility: 'hidden',
+                                    }}
+                                    >
+                                        <Image
+                                            src={notebookInside}
+                                            alt="Notebook Inside Right Half"
+                                            fill
+                                            style={{
+                                                objectFit: 'contain',  // maintain exact aspect ratio
+                                                objectPosition: 'center',
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                        </motion.div>
+                        )
                       })
-                  }
-          </motion.div>
+                    }
+            </motion.div>
             
           <div className="relative" style={{ width: '13vw', height: '40vh' }}>
               {/* Animated Cover (foreground) */}
