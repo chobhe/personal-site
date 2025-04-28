@@ -20,6 +20,12 @@ interface NotebookProps {
 // EC: Make the page flipping perfect
 // Put content on the pages 
 // Animate the content like it's being handwritten in real time
+// Add github, linkedin, email icons at the bottom of the about me page 
+/* 
+[Email](mailto:he.Charlie@yahoo.com)
+[Github](https://github.com/chobhe)
+[Linkedin](https://www.linkedin.com/in/charliehe1/)
+*/
 
 
 
