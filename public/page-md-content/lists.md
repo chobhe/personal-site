@@ -1,6 +1,3 @@
-4/29/2025
-Entry #3
-
 My favorite books.
 
 <details>

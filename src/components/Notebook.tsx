@@ -9,6 +9,10 @@ import notebookInsideRight from '@/assets/images/notebook-open-right.png';
 import NotebookTabs, { tabs } from '@/components/Tabs';
 import { NotebookPage } from './NotebookPage';
 import ReactMarkdown from 'react-markdown';
+import { Kalam } from 'next/font/google';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+
 
 
 
@@ -17,6 +21,11 @@ const tabContent = {
   'Work History': { front: '', back: '' },
   'Lists': { front: '', back: '' },
 };
+
+const kalam = Kalam({
+    subsets: ['latin'],
+    weight: ['400'], // normal writing weight
+  });
 
 interface NotebookProps {
   title: string;
@@ -132,13 +141,13 @@ return (
 
             }}
             transition={{ duration: 1, ease: 'easeInOut' }}
-            style={{ pointerEvents: 'none' }}
+            // style={{ pointerEvents: 'none' }}
             >
                 <Image
                     src={notebookInside}
                     alt="Notebook Inside"
                     fill
-                    style={{ objectFit: 'contain'}}
+                    style={{ objectFit: 'contain', pointerEvents: 'none'}}
                 />
                   
                  
@@ -177,19 +186,17 @@ return (
                                 height: '100%',
                                 transformOrigin: 'left center', 
                                 transformStyle: 'preserve-3d',
-                                zIndex: zIndex,
+                                zIndex: tabPositions[currentTab.name] ? zIndex - 1 : zIndex, // Lower z-index when flipped
                             }}
                             onAnimationComplete={() => {
-                                // TODO: Handle the tab glitching when the animation is complete
                                 setFrontTab(selectedTab);
-                                
                             }}
                         >
                             <motion.div
                                 className="absolute inset-y-0 right-1.5 flex flex-col items-end pointer-events-auto"
                                 initial={{ x: '2vw', opacity: 0 }}
                                 animate={{ x: notebookOpen ? '0vw' : '2vw', opacity: notebookOpen ? 1 : 0 }}
-                                style={{ width: '20%', zIndex:20 }}
+                                style={{ width: '20%', zIndex: 20 }}
                             >
                                 <NotebookTabs selectedTabName={selectedTab} setSelectedTabName={(tabName) => handleTabClick(tabName, tabPositions[tabName] ? 'right' : 'left')}  currentTabName={currentTab.name} currentTabLeft={tabPositions[currentTab.name]} stopPropagation={false} cover={false}/>
                             </motion.div>
@@ -203,17 +210,102 @@ return (
                                     top: 0,
                                     zIndex: 5,
                                     transformStyle: 'preserve-3d',
+                                    backfaceVisibility: 'hidden',
                                 }}
                                 >   
-                                    <Image
-                                        src={notebookInsideRight}
-                                        alt="Notebook Inside Right Half"
-                                        fill
+                                <Image
+                                    src={notebookInsideRight}
+                                    alt="Notebook Inside Right Half"
+                                    fill
+                                    style={{
+                                        objectFit: 'contain',
+                                        objectPosition: 'center',
+                                        backfaceVisibility: 'hidden',
+                                        pointerEvents: 'none'
+                                    }}
+                                />
+                                {/* Add markdown content overlay */}
+                                <div className={`${kalam.className} absolute inset-0 p-8 overflow-y-auto`} style={{
+                                width: '90%',
+                                height: '90%',
+                                margin: '5% auto',
+                                backgroundColor: 'transparent',
+                                left: '-5%',
+                                }}>
+                                <div className="flex justify-end mb-4">
+                                    <div className="text-right text-[10px] tracking-wide text-black">
+                                    <div>{new Date(new Date().setDate(new Date().getDate() + tabIndex)).toLocaleDateString()}</div>
+                                    <div><strong>Entry #{tabIndex + 1}</strong></div>
+                                    </div>
+                                </div>
+
+                                <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
+                                rehypePlugins={[rehypeRaw]}
+                                components={{
+                                    p: ({ node, ...props }) => (
+                                    <p
+                                        className={`text-[12px] leading-relaxed mb-${Math.floor(Math.random() * 3) + 1}`}
                                         style={{
-                                            objectFit: 'contain',  // maintain exact aspect ratio
-                                            objectPosition: 'center',
+                                        transform: `rotate(${(Math.random() * 0.5 - 0.25).toFixed(3)}deg)`,
+                                        marginLeft: `${(Math.random() * 9 - 3).toFixed(2)}px`, // shift between -3px and +3px
                                         }}
+                                        {...props}
                                     />
+                                    ),
+                                    ul: ({ node, ...props }) => (
+                                    <ul
+                                        className="list-disc list-inside text-[10px] mb-2"
+                                        {...props}
+                                    />
+                                    ),
+                                    li: ({ node, ...props }) => (
+                                    <li
+                                        className={`mb-${Math.floor(Math.random() * 2) + 1}`}
+                                        style={{
+                                        transform: `rotate(${(Math.random() * 0.5 - 0.25).toFixed(3)}deg)`,
+                                        }}
+                                        {...props}
+                                    />
+                                    ),
+                                    a: ({ node, ...props }) => (
+                                    <a
+                                        className="underline text-blue-600"
+                                        {...props}
+                                    />
+                                    ),
+                                    table: ({ node, ...props }) => (
+                                        <table
+                                          className="table-auto border-collapse border border-black text-left text-[12px] my-2 w-full font-normal"
+                                          {...props}
+                                        />
+                                      ),
+                                      thead: ({ node, ...props }) => (
+                                        <thead className="font-normal" {...props} />
+                                      ),
+                                      th: ({ node, ...props }) => (
+                                        <th
+                                          className="border border-black px-1 py-0.5 font-normal"
+                                          {...props}
+                                        />
+                                      ),
+                                      td: ({ node, ...props }) => (
+                                        <td
+                                          className="border border-black px-1 py-0.5 align-top"
+                                          {...props}
+                                        />
+                                      ),
+                                      details: ({ node, ...props }) => (
+                                        <details className="my-4" {...props} />
+                                      ),
+                                      summary: ({ node, ...props }) => (
+                                        <summary className="cursor-pointer font-semibold text-[14px] mb-2" {...props} />
+                                      ),
+                                }}
+                                >
+                                {markdownContent[currentTab.name as keyof typeof markdownContent].front}
+                                </ReactMarkdown>
+                                </div>
                                 </div>
                         </motion.div>
                         )
