@@ -3,6 +3,8 @@
 import Image from 'next/image';
 
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 interface Tab {
   name: string;
   asset: string;
@@ -82,7 +84,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
               style={cropStyle}
             >
               <Image
-                src={tab.asset}
+                src={`${basePath}${tab.asset}`}
                 alt={`${tab.name} Tab`}
                 fill
                 style={{ objectFit: 'cover'}}
@@ -90,7 +92,7 @@ export default function NotebookTabs({ selectedTabName, setSelectedTabName, curr
               <div className="absolute inset-0 flex items-center justify-center opacity-80 mix-blend-multiply">
                 <div className="w-3/4 h-3/4 flex items-center justify-center hover:animate-pulse-scale">
                   <Image 
-                    src={tab.iconGif} 
+                    src={`${basePath}${tab.iconGif}`} 
                     alt="Tab Icon" 
                     width={50} 
                     height={50} 

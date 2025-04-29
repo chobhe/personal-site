@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Image from 'next/image'; // or your image component
 
-
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const handwritingFont = {
   fontFamily: '"Indie Flower", cursive',
   fontSize: '1.2rem',
@@ -25,7 +25,7 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({ frontMd, backMd }) =
   return (
     <div style={{ position: 'relative', width: '600px', height: '800px' }}>
       <Image
-        src={"/images/notebook-open.png"}
+        src={`${basePath}/images/notebook-open.png`}
         alt="Notebook Page"
         fill
         style={{ objectFit: 'contain', objectPosition: 'center' }}

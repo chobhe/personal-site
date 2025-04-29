@@ -1,7 +1,7 @@
 import { useRef } from "react"
 
 
-
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export default function VideoCollage() {
   return (
@@ -9,7 +9,7 @@ export default function VideoCollage() {
       <video
         ref = {useRef<HTMLVideoElement>(null)}
         autoPlay
-        src={"/videos/collage_no_v1.mp4"}
+        src={`${basePath}/videos/collage_no_v1.mp4`}
         loop
         muted
         playsInline

@@ -10,7 +10,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
 
-
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const tabContent = {
   'About Me': { front: '', back: '' },
@@ -53,9 +53,9 @@ export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNo
     useEffect(() => {
       const fetchMarkdown = async () => {
         try {
-          const aboutMeResponse = await fetch('/page-md-content/about-me.md');
-          const workHistoryResponse = await fetch('/page-md-content/work-history.md');
-          const listsResponse = await fetch('/page-md-content/lists.md');
+          const aboutMeResponse = await fetch(`${basePath}/page-md-content/about-me.md`);
+          const workHistoryResponse = await fetch(`${basePath}/page-md-content/work-history.md`);
+          const listsResponse = await fetch(`${basePath}/page-md-content/lists.md`);
           
           const aboutMeText = await aboutMeResponse.text();
           const workHistoryText = await workHistoryResponse.text();
@@ -134,7 +134,7 @@ return (
             // style={{ pointerEvents: 'none' }}
             >
                 <Image
-                    src={"/images/notebook-open.png"}
+                    src={`${basePath}/images/notebook-open.png`}
                     alt="Notebook Inside"
                     fill
                     style={{ objectFit: 'contain', pointerEvents: 'none'}}
@@ -204,7 +204,7 @@ return (
                                 }}
                                 >   
                                 <Image
-                                    src={"/images/notebook-open-right.png"}
+                                    src={`${basePath}/images/notebook-open-right.png`}
                                     alt="Notebook Inside Right Half"
                                     fill
                                     style={{
@@ -315,7 +315,7 @@ return (
                   }}
               >
                   <Image
-                      src={"/images/notebook-no-dividers.png"}
+                      src={`${basePath}/images/notebook-no-dividers.png`}
                       alt="Notebook Cover"
                       fill
                       style={{ 
