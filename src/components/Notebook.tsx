@@ -3,9 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import notebookCover from '@/assets/images/notebook-no-dividers.png';
-import notebookInside from '@/assets/images/notebook-open.png';
-import notebookInsideRight from '@/assets/images/notebook-open-right.png';
 import NotebookTabs, { tabs } from '@/components/Tabs';
 import ReactMarkdown from 'react-markdown';
 import { Kalam } from 'next/font/google';
@@ -137,7 +134,7 @@ return (
             // style={{ pointerEvents: 'none' }}
             >
                 <Image
-                    src={notebookInside}
+                    src={"/images/notebook-open.png"}
                     alt="Notebook Inside"
                     fill
                     style={{ objectFit: 'contain', pointerEvents: 'none'}}
@@ -207,7 +204,7 @@ return (
                                 }}
                                 >   
                                 <Image
-                                    src={notebookInsideRight}
+                                    src={"/images/notebook-open-right.png"}
                                     alt="Notebook Inside Right Half"
                                     fill
                                     style={{
@@ -318,7 +315,7 @@ return (
                   }}
               >
                   <Image
-                      src={notebookCover}
+                      src={"/images/notebook-no-dividers.png"}
                       alt="Notebook Cover"
                       fill
                       style={{ 

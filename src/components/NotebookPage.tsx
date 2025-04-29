@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Image from 'next/image'; // or your image component
 
-// Import your notebook images
-import notebookInside from '@/assets/images/notebook-open.png';
 
 const handwritingFont = {
   fontFamily: '"Indie Flower", cursive',
@@ -27,7 +25,7 @@ export const NotebookPage: React.FC<NotebookPageProps> = ({ frontMd, backMd }) =
   return (
     <div style={{ position: 'relative', width: '600px', height: '800px' }}>
       <Image
-        src={notebookInside}
+        src={"/images/notebook-open.png"}
         alt="Notebook Page"
         fill
         style={{ objectFit: 'contain', objectPosition: 'center' }}
