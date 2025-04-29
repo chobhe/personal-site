@@ -7,7 +7,6 @@ import notebookCover from '@/assets/images/notebook-no-dividers.png';
 import notebookInside from '@/assets/images/notebook-open.png';
 import notebookInsideRight from '@/assets/images/notebook-open-right.png';
 import NotebookTabs, { tabs } from '@/components/Tabs';
-import { NotebookPage } from './NotebookPage';
 import ReactMarkdown from 'react-markdown';
 import { Kalam } from 'next/font/google';
 import remarkGfm from 'remark-gfm';
@@ -92,7 +91,7 @@ export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNo
         setSelectedTab(tabName);
 
         // Loop through all the tabs and depending on the flipDirection and the selected tab, flip all the other tabs
-        var tabIndex = tabs.findIndex((tab) => tab.name === tabName);
+        const tabIndex = tabs.findIndex((tab) => tab.name === tabName);
         setTabPositions((prev) => {
             const updatedPositions = { ...prev };
             if (flipDirection === 'left') {
@@ -109,13 +108,7 @@ export default function NotebookFlip({ title = 'charlie he', notebookOpen, setNo
         });
       };    
 
-    var selectedIndex = 0 
-    for (let i = 0; i < tabs.length; i++) {
-        if (tabs[i].name === selectedTab) {
-            selectedIndex = i;
-            break;
-        }
-    }
+
 
 
 
@@ -154,9 +147,9 @@ return (
 
                     {
                       tabs.map((currentTab) => {
-                          var tabIndex = tabs.findIndex((tab) => tab.name === currentTab.name);
-                          var frontTabIndex = tabs.findIndex((tab) => tab.name === frontTab);
-                          var zIndex = frontTab === currentTab.name ? 30 : 5;
+                          const tabIndex = tabs.findIndex((tab) => tab.name === currentTab.name);
+                          const frontTabIndex = tabs.findIndex((tab) => tab.name === frontTab);
+                          let zIndex = frontTab === currentTab.name ? 30 : 5;
                           // If that tab is on the right side and the tab is above the selected tab, set a high zIndex for flipping.
                           // Post flipping we want the tab closest to the selected tab to have the highest zIndex
                           if (!tabPositions[currentTab.name])  { // on the right side
@@ -243,23 +236,23 @@ return (
                                 remarkPlugins={[remarkGfm]}
                                 rehypePlugins={[rehypeRaw]}
                                 components={{
-                                    p: ({ node, ...props }) => (
+                                    p: ({  ...props }) => (
                                     <p
                                         className={`text-[12px] leading-relaxed mb-${Math.floor(Math.random() * 3) + 1}`}
                                         style={{
                                         transform: `rotate(${(Math.random() * 0.5 - 0.25).toFixed(3)}deg)`,
-                                        marginLeft: `${(Math.random() * 9 - 3).toFixed(2)}px`, // shift between -3px and +3px
+                                        marginLeft: `${(Math.random() * 6 - 3).toFixed(2)}px`, // shift between -3px and +3px
                                         }}
                                         {...props}
                                     />
                                     ),
-                                    ul: ({ node, ...props }) => (
+                                    ul: ({  ...props }) => (
                                     <ul
                                         className="list-disc list-inside text-[10px] mb-2"
                                         {...props}
                                     />
                                     ),
-                                    li: ({ node, ...props }) => (
+                                    li: ({  ...props }) => (
                                     <li
                                         className={`mb-${Math.floor(Math.random() * 2) + 1}`}
                                         style={{
@@ -268,37 +261,37 @@ return (
                                         {...props}
                                     />
                                     ),
-                                    a: ({ node, ...props }) => (
+                                    a: ({  ...props }) => (
                                     <a
                                         className="underline text-blue-600"
                                         {...props}
                                     />
                                     ),
-                                    table: ({ node, ...props }) => (
+                                    table: ({  ...props }) => (
                                         <table
                                           className="table-auto border-collapse border border-black text-left text-[12px] my-2 w-full font-normal"
                                           {...props}
                                         />
                                       ),
-                                      thead: ({ node, ...props }) => (
+                                      thead: ({  ...props }) => (
                                         <thead className="font-normal" {...props} />
                                       ),
-                                      th: ({ node, ...props }) => (
+                                      th: ({  ...props }) => (
                                         <th
                                           className="border border-black px-1 py-0.5 font-normal"
                                           {...props}
                                         />
                                       ),
-                                      td: ({ node, ...props }) => (
+                                      td: ({  ...props }) => (
                                         <td
                                           className="border border-black px-1 py-0.5 align-top"
                                           {...props}
                                         />
                                       ),
-                                      details: ({ node, ...props }) => (
+                                      details: ({  ...props }) => (
                                         <details className="my-4" {...props} />
                                       ),
-                                      summary: ({ node, ...props }) => (
+                                      summary: ({  ...props }) => (
                                         <summary className="cursor-pointer font-semibold text-[14px] mb-2" {...props} />
                                       ),
                                 }}

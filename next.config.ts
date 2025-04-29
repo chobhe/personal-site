@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   /* config options here */
   webpack: (config) => {
@@ -8,7 +9,11 @@ const nextConfig: NextConfig = {
       type: 'asset/source'
     });
     return config;
-  }
+  },
+  output: 'export',
+  distDir: 'out',
 };
+
+
 
 export default nextConfig;

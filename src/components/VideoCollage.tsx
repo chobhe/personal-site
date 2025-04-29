@@ -1,9 +1,5 @@
-import { useRef, useEffect, useState } from "react"
+import { useRef } from "react"
 
-
-const videos = [
-  "/videos/collage_no_v1.mp4",
-];
 
 
 

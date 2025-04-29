@@ -34,7 +34,7 @@ export const tabs: Tab[] = [
 ];
 
 export default function NotebookTabs({ selectedTabName, setSelectedTabName, currentTabName, currentTabLeft ,stopPropagation=false, cover=false}: NotebookTabsProps) {
-  var tab = tabs.find((tab) => tab.name === currentTabName) || tabs[0];  // default to first tab if not found
+  const tab = tabs.find((tab) => tab.name === currentTabName) || tabs[0];  // default to first tab if not found
 
   const { width, height } = tab.asset;
   const paddingTop = `${(height / width) * 70}%`;
