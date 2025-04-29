@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
-const repoName = 'personal-site'; 
-const isProd = process.env.NODE_ENV === 'production';
+// const repoName = 'personal-site'; 
+// const isProd = process.env.NODE_ENV === 'production';
 
 
 
@@ -18,11 +18,11 @@ const nextConfig: NextConfig = {
   output: 'export',
   distDir: 'out',
   images: { unoptimized: true },
-  basePath: isProd ? `/${repoName}` : '',
-  assetPrefix: isProd ? `/${repoName}/` : '',
-  env: {
-    NEXT_PUBLIC_BASE_PATH: isProd ? `/${repoName}` : '',
-  },
+  // basePath: isProd ? `/${repoName}` : '',
+  // assetPrefix: isProd ? `/${repoName}/` : '',
+  // env: {
+  //   NEXT_PUBLIC_BASE_PATH: isProd ? `/${repoName}` : '',
+  // },
 };
 
 
